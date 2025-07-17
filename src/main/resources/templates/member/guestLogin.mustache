@@ -9,10 +9,15 @@
             <label for="name">이름</label>
             <input type="text" id="name" name="name" placeholder="이름을 입력해주세요." required>
         </div>
-
+        
         <div class="form-group">
-            <label for="birthDate">생년월일</label>
-            <input type="date" id="birthDate" name="birthDate" required>
+            <label for="birthYear">생년월일</label>
+            <div class="birthdate-inputs">
+                <input type="text" id="birthYear" placeholder="YYYY" maxlength="4" inputmode="numeric" required>
+                <input type="text" id="birthMonth" placeholder="MM" maxlength="2" inputmode="numeric" required>
+                <input type="text" id="birthDay" placeholder="DD" maxlength="2" inputmode="numeric" required>
+            </div>
+            <input type="hidden" id="birthDate" name="birthDate" required>
         </div>
 
         <div class="form-group">
@@ -36,6 +41,7 @@
         {{/error}}
 
         <button type="button" class="btn btn-primary" id="guestLoginBtn" disabled>비회원 로그인</button>
+        <input type="hidden" name="redirect" value="{{redirect}}">
     </form>
 
     <div class="login-links">

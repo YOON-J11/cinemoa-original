@@ -158,4 +158,48 @@ document.addEventListener("DOMContentLoaded", function () {
         renderSelectedSeats();
         updatePrice();
     });
+
+    const goLoginBtn = document.getElementById("goLogin");
+    if (goLoginBtn) {
+        goLoginBtn.addEventListener("click", function () {
+            const showtimeId = new URLSearchParams(window.location.search).get("showtimeId");
+            const redirectUrl = `/reservation/payment`;
+
+            sessionStorage.setItem("redirectAfterLogin", `/reservation/seats?showtimeId=${showtimeId}`);
+
+            // confirm 없이 바로 로그인 페이지로 이동
+            window.location.href = `/member/login?redirect=${encodeURIComponent(redirectUrl)}`;
+        });
+    }
+
+    // 다음 버튼 눌렀을 때 모달
+    document.querySelector(".navigation .next").addEventListener("click", function () {
+        fetch("/checkLogin", {
+            method: "GET",
+            credentials: "include"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    window.location.href = "/reservation/payment";
+                } else {
+                    // 로그인 모달 표시
+                    document.getElementById("loginRequiredModal").style.display = "flex";
+                }
+            });
+    });
+
+    // 모달 내 버튼 클릭 이벤트
+    document.getElementById("loginMemberBtn").addEventListener("click", function () {
+        const redirectUrl = "/reservation/payment";
+        window.location.href = `/member/login?redirect=${encodeURIComponent(redirectUrl)}`;
+    });
+
+    document.getElementById("loginGuestBtn").addEventListener("click", function () {
+        const redirectUrl = "/reservation/payment";
+        window.location.href = `/guest/login?redirect=${encodeURIComponent(redirectUrl)}`;
+    });
+
+
+
 });

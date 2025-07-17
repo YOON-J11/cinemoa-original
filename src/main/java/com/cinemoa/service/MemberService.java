@@ -5,9 +5,12 @@ import com.cinemoa.dto.MemberDto;
 import com.cinemoa.dto.ReservationDto;
 import com.cinemoa.entity.Member;
 import com.cinemoa.repository.MemberRepository;
+import com.cinemoa.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,9 +99,30 @@ public class MemberService {
     }
 
     // 최근 예매 내역 (5건)
+    @Autowired
+    private ReservationRepository reservationRepository;
+
     public List<ReservationDto> getRecentReservations(String memberId) {
-        return memberRepository.getRecentReservations(memberId);
+        return reservationRepository.findTop5ByMember_MemberIdOrderByReservationTimeDesc(memberId)
+                .stream()
+                .map(reservation -> ReservationDto.builder()
+                        .reservationId(reservation.getReservationId())
+                        .memberId(reservation.getMember().getMemberId())
+                        .movieId(reservation.getMovie().getMovieId())
+                        .cinemaId(reservation.getCinema().getCinemaId())
+                        .screenId(reservation.getScreenId())
+                        .seatInfo(reservation.getSeatInfo())
+                        .reservationTime(reservation.getReservationTime()) // LocalDateTime 유지
+                        .paymentMethod(reservation.getPaymentMethod())
+                        .status(reservation.getStatus())
+                        .movieTitle(reservation.getMovie().getTitle())
+                        .cinemaName(reservation.getCinema().getName())
+                        .build()
+                )
+                .toList();
     }
+
+
 
     // 최근 문의 내역 (5건)
     public List<InquiryDto> getRecentInquiries(String memberId) {

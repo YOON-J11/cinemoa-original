@@ -1,6 +1,8 @@
 package com.cinemoa.controller;
 
+import com.cinemoa.entity.Reservation;
 import com.cinemoa.entity.Seat;
+import com.cinemoa.repository.ReservationRepository;
 import com.cinemoa.repository.SeatRepository;
 import com.cinemoa.entity.Showtime;
 import com.cinemoa.repository.ShowtimeRepository;
@@ -22,7 +24,8 @@ import java.util.stream.Collectors;
 public class SeatsController {
 
     private final ShowtimeRepository showtimeRepository;
-    private final SeatRepository seatRepository;  // 추가: 좌석 데이터 조회를 위한 repository
+    private final SeatRepository seatRepository;
+    private final ReservationRepository reservationRepository;
 
     @GetMapping("/seats")
     public String showSeatPage(@RequestParam("showtimeId") Long showtimeId, Model model) {
@@ -43,8 +46,20 @@ public class SeatsController {
             // 조조 할인 여부 판단 (10시 이전이면 true)
             boolean isMorning = showtime.getStartTime().getHour() < 10;
 
+
+            // 예매된 좌석 정보 가져오기
+            List<Reservation> reservations = reservationRepository.findByShowtime_ShowtimeId(showtimeId);
+
+            List<String> reservedSeats = reservations.stream()
+                    .map(r -> r.getSeatInfo())     // 예: "A3,A4"
+                    .filter(Objects::nonNull)
+                    .flatMap(info -> Arrays.stream(info.split(",")))
+                    .collect(Collectors.toList());
+
+
             // 좌석 데이터 가져오기
             List<Seat> seats = seatRepository.findByScreen_ScreenId(showtime.getScreen().getScreenId());
+
             List<Map<String, Object>> seatRowList = seats.stream()
                     .collect(Collectors.groupingBy(
                             Seat::getSeatRow,
@@ -56,12 +71,13 @@ public class SeatsController {
                                 map.put("seatNumber", seat.getSeatNumber());
                                 map.put("isVip", "VIP".equals(seat.getSeatType()));
                                 map.put("isAccessible", "ACCESSIBLE".equals(seat.getSeatType()));
-                                map.put("price", seat.getPrice()); //좌석 가격
-                                map.put("isReserved", false); // 예매 여부 (현재는 임시로 false설정)
-                                map.put("isGap", false);      // 좌석 간격
+                                map.put("price", seat.getPrice());
+
+                                String seatLabel = seat.getSeatRow() + seat.getSeatNumber();
+                                map.put("isReserved", reservedSeats.contains(seatLabel));
+                                map.put("isGap", false);
                                 return map;
                             }, Collectors.toList())
-
                     ))
                     .entrySet().stream()
                     .map(entry -> {
@@ -93,8 +109,6 @@ public class SeatsController {
             model.addAttribute("screenType", showtime.getScreen().getScreenType());
             model.addAttribute("isStandard", "STANDARD".equals(screenType));
             model.addAttribute("isImax", "IMAX".equals(screenType));
-
-
 
             return "seats/seatReservation"; // 좌석 예약 페이지
         } else {

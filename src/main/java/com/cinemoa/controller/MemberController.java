@@ -135,6 +135,13 @@ public class MemberController {
         // 세션에 로그인 사용자 저장
         session.setAttribute("loginMember", member);
 
+        // 이전에 저장된 리디렉션 경로가 있다면
+        String redirectPath = (String) session.getAttribute("redirectAfterLogin");
+        if (redirectPath != null) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirectPath;
+        }
+
         return "redirect:/"; //로그인 성공 후 메인페이지로 이동
     }
 
@@ -143,6 +150,12 @@ public class MemberController {
     public String logout(HttpSession session) {
         session.invalidate(); // 세션 초기화
         return "redirect:/"; // 홈으로 이동
+    }
+    //비회원로그아웃
+    @GetMapping("/guest/logout")
+    public String guestLogout(HttpSession session) {
+        session.invalidate(); // 비회원도 전체 세션 삭제
+        return "redirect:/";
     }
 
     // 아이디, 비밀번호 찾기 페이지

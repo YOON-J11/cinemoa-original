@@ -148,3 +148,14 @@ input[type="date"]:valid {
   background-color: #006f7c;
   color: white;
 }
+
+
+.birthdate-inputs {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+}
+.birthdate-inputs input {
+  width: 100%;
+  text-align: center;
+}

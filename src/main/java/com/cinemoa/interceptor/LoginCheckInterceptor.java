@@ -11,10 +11,15 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("loginMember") == null) {
+        boolean isMemberLoggedIn = session != null && session.getAttribute("loginMember") != null;
+        boolean isGuestLoggedIn = session != null && session.getAttribute("guestUser") != null;
+
+        if (!isMemberLoggedIn && !isGuestLoggedIn) {
             response.sendRedirect("/member/login");
             return false;
         }
+
         return true;
     }
 }
+
