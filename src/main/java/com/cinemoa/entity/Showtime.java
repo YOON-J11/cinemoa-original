@@ -48,9 +48,6 @@ public class Showtime {
         updatedAt = LocalDateTime.now();
     }
 
-    @Transient
-    private int availableSeats;
-
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

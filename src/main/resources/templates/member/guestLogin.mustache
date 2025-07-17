@@ -1,0 +1,63 @@
+{{> common/header }}
+<link rel="stylesheet" href="/css/member/guestLogin.css?v={{ timestamp }}" />
+
+<div class="container guest-login-page">
+    <h3 class="page-title">비회원 로그인</h3>
+    <form method="post" action="/guest/login" class="guest-login-form">
+
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" placeholder="이름을 입력해주세요." required>
+        </div>
+
+        <div class="form-group">
+            <label for="birthDate">생년월일</label>
+            <input type="date" id="birthDate" name="birthDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">휴대폰 번호</label>
+            <input type="tel" id="phone" name="phone" placeholder="'-' 없이 숫자만 입력" required
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        </div>
+
+        <div class="form-group">
+            <label for="reservationPassword">예매 비밀번호</label>
+            <input type="password" name="reservationPassword" id="reservationPassword" placeholder="예매 비밀번호" maxlength="4" required>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">예매 비밀번호 확인</label>
+            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="예매 비밀번호 확인" maxlength="4" required>
+        </div>
+
+        {{#error}}
+            <div class="error-msg">{{error}}</div>
+        {{/error}}
+
+        <button type="button" class="btn btn-primary" id="guestLoginBtn" disabled>비회원 로그인</button>
+    </form>
+
+    <div class="login-links">
+        <a href="/member/login">회원 로그인</a>
+    </div>
+
+    <div id="guestModal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h4>입력하신 정보로<br>비회원 로그인을 진행합니다.</h4>
+            <div class="modal-content">
+                <p><strong>이름 :</strong> <span id="modalName"></span></p>
+                <p><strong>휴대폰 번호 :</strong> <span id="modalPhone"></span></p>
+                <p><strong>예매 비밀번호 :</strong> <span id="modalPassword"></span></p>
+            </div>
+            <p class="modal-desc">※ 본 번호를 잘 기억해두세요. 예매 내역 조회 시 사용됩니다.</p>
+            <div class="modal-actions">
+                <button type="button" id="modalCancel">취소</button>
+                <button type="submit" id="modalConfirm">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/member/guestLogin.js"></script>
+{{> common/footer }}
