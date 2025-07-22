@@ -13,13 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewDto {
     private Long reviewId;
-    private Long movieId;
-    private Long userId;
+    private Long movieId;  // DTO 변환 시 Review.movie.movieId
+    private String userId;  // Review.user.memberId
     private String content;
     private Boolean isPositive; // true: 좋았어요, false: 별로였어요
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // 사용자 이름 표시용 (선택적)
-    private String userName;
+    private String userName;  // Review.user.nickname
+
+    private boolean deletable;  // 삭제 권한 여부
 }

@@ -1,19 +1,23 @@
+// src/main/java/com/cinemoa/service/impl/ShowtimeServiceImpl.java
 package com.cinemoa.service;
 
+import com.cinemoa.dto.ShowtimeDto;
 import com.cinemoa.entity.Showtime;
 import com.cinemoa.repository.ShowtimeRepository;
+import com.cinemoa.service.ShowtimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter; // 날짜 포맷을 위해 임포트
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ShowtimeServiceImpl implements ShowtimeService {
 
     private final ShowtimeRepository showtimeRepository;
@@ -25,32 +29,44 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     public List<String> getAvailableDatesByMovieAndCinema(Long movieId, Long cinemaId) {
-        // 해당 영화와 영화관에 대한 모든 상영 시간 조회
-        // movie_movieId로 수정 (movie 엔티티의 movieId 필드 참조)
-        List<Showtime> showtimes = showtimeRepository.findByMovie_MovieIdAndScreen_Cinema_CinemaIdOrderByStartTimeAsc(movieId, cinemaId);
-
-        // 날짜만 추출하여 중복 제거 후 반환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return showtimes.stream()
-                .map(showtime -> showtime.getStartTime().toLocalDate().format(formatter))
-                .distinct()
+        List<LocalDate> dates = showtimeRepository.findDistinctDatesByMovieAndCinema(movieId, cinemaId);
+        // "yyyy-MM-dd" 형식의 문자열로 변환하여 반환
+        return dates.stream()
+                .map(date -> date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Showtime> getShowtimesByMovieCinemaAndDate(Long movieId, Long cinemaId, LocalDate date) {
-        // 해당 날짜의 시작과 끝 시간 설정
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+    public List<ShowtimeDto> getShowtimesByMovieCinemaAndDate(Long movieId, Long cinemaId, LocalDate date) {
+        // LocalDate를 LocalDateTime 범위로 변환
+        LocalDateTime startOfDay = date.atStartOfDay(); // 해당 날짜의 00:00:00
+        LocalDateTime endOfDay = date.atTime(23, 59, 59); // 해당 날짜의 23:59:59
 
-        // 해당 영화, 영화관, 날짜에 대한 상영 시간 조회
-        // movie_movieId와 screen_cinema_cinemaId로 수정 (엔티티 관계 경로 명확히 표현)
-        return showtimeRepository.findByMovie_MovieIdAndScreen_Cinema_CinemaIdAndStartTimeBetweenOrderByStartTimeAsc(
-                movieId, cinemaId, startOfDay, endOfDay);
+        // 파생 쿼리 메서드 호출
+        List<Showtime> showtimes = showtimeRepository.findByMovie_MovieIdAndScreen_Cinema_CinemaIdAndStartTimeBetweenOrderByStartTimeAsc(
+                movieId, cinemaId, startOfDay, endOfDay
+        );
+
+        return showtimes.stream().map(showtime -> {
+            LocalDateTime calculatedEndTime = null;
+            if (showtime.getMovie() != null && showtime.getMovie().getRunningTime() != null) {
+                calculatedEndTime = showtime.getStartTime().plusMinutes(showtime.getMovie().getRunningTime());
+            } else {
+                calculatedEndTime = showtime.getEndTime();
+            }
+
+            return ShowtimeDto.builder()
+                    .showtimeId(showtime.getShowtimeId())
+                    .startTime(showtime.getStartTime())
+                    .endTime(calculatedEndTime)
+                    .screenName(showtime.getScreen().getScreenName())
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     @Override
     public Optional<Showtime> getShowtimeById(Long showtimeId) {
-        return showtimeRepository.findById(showtimeId);
+        // 파생 쿼리 메서드 findByShowtimeId 호출
+        return showtimeRepository.findByShowtimeId(showtimeId);
     }
 }

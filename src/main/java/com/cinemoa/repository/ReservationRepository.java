@@ -1,7 +1,11 @@
 package com.cinemoa.repository;
 
+import com.cinemoa.entity.Movie;
+import com.cinemoa.entity.Payment;
 import com.cinemoa.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,5 +25,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByMember_MemberIdAndStatus(String memberId, String status);
 
     boolean existsByMovie_MovieIdAndMember_MemberId(Long movieId, String memberId);
+
+    // 특정 영화의 예매 수
+    long countByMovie(Movie movie);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.movie.movieId = :movieId AND r.payment.status = :status")
+    long countConfirmedAudience(@Param("movieId") Long movieId, @Param("status") Payment.PaymentStatus status);
+
+    @Query("SELECT COUNT(r) FROM Reservation r")
+    long countAll();
 
 }

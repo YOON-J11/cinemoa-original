@@ -1,30 +1,24 @@
-<!-- reviews/new.mustache 파일 내용 -->
 <form action="/reviews/new" method="post">
     <input type="hidden" name="movieId" value="{{movieId}}">
 
-    <div class="form-group">
-        <label>이 영화 어떠셨나요?</label>
-        <div class="btn-group d-flex mb-3" role="group">
+    <div class="form-group pb-15">
+        <p class="pb-15">이 영화 어떠셨나요?</p>
+        <div class="btn-group d-flex" role="group">
             <input type="radio" class="btn-check" name="isPositive" id="positive" value="true" autocomplete="off" checked>
             <label class="btn btn-outline-success" for="positive">
                 <i class="bi bi-hand-thumbs-up"></i> 좋았어요
             </label>
-
             <input type="radio" class="btn-check" name="isPositive" id="negative" value="false" autocomplete="off">
             <label class="btn btn-outline-danger" for="negative">
                 <i class="bi bi-hand-thumbs-down"></i> 별로였어요
             </label>
         </div>
     </div>
-
-    <div class="form-group mb-3">
-        <label for="content">내용</label>
+    <div class="form-group">
         <textarea id="content" name="content" rows="5" class="form-control" required></textarea>
     </div>
-
-    <div class="button-group">
+    <div class="button-group pt-15">
         <button type="submit" class="btn btn-primary">등록하기</button>
-        <!-- 모달 내에서는 취소 버튼이 모달을 닫도록 변경할 수 있습니다 -->
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
     </div>
 </form>

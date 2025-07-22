@@ -2,9 +2,11 @@ package com.cinemoa.controller;
 
 import com.cinemoa.dto.MovieDto;
 import com.cinemoa.dto.ReviewDto;
+import com.cinemoa.entity.Member;
 import com.cinemoa.entity.Movie;
 import com.cinemoa.service.MovieService;
 import com.cinemoa.service.ReviewService;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
 @Controller
 @RequestMapping("/movies")
 public class MovieController {
@@ -48,47 +52,51 @@ public class MovieController {
     @GetMapping("")
     public String listMovies(@RequestParam(required = false) String status,
                              Model model,
-                             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+                             @PageableDefault(size = 12, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, HttpSession session) {
 
-        Page<MovieDto> movies;
+        //Page<MovieDto> movies;
 
-        // 상영 상태별 필터링
-        if (status != null && !status.isEmpty()) {
-            try {
-                // 문자열을 Enum으로 변환
-                com.cinemoa.entity.Movie.ScreeningStatus screeningStatus =
-                        com.cinemoa.entity.Movie.ScreeningStatus.valueOf(status);
+        // 세션에서 로그인된 사용자 정보 가져오기 (다른 메서드와 일치시킴)
+        Object sessionAttribute = session.getAttribute("loginMember");
+        String currentMemberId = null;
 
-                // 상영 상태별 영화 조회 (페이징 처리 필요)
-                movies = movieService.getMoviesByScreeningStatus(screeningStatus, pageable);
-            } catch (IllegalArgumentException e) {
-                // 잘못된 상태 값이 전달된 경우 모든 영화 표시
-                movies = movieService.getMoviesPaginated(pageable);
-            }
+        if (sessionAttribute instanceof Member) {
+            Member loginMember = (Member) sessionAttribute;
+            currentMemberId = loginMember.getMemberId();
+            System.out.println("초기 로드 - 로그인된 사용자 ID: " + currentMemberId);
         } else {
-            // 상태 파라미터가 없으면 모든 영화 표시
-            movies = movieService.getMoviesPaginated(pageable);
+            currentMemberId = "test2"; // 임시 ID
+            System.out.println("초기 로드 - 임시 ID 사용: " + currentMemberId);
         }
 
-        // 다음 페이지 번호 계산 (movies.number는 현재 페이지 번호, 0부터 시작)
-        int nextPageNumber = movies.getNumber() + 1;
-        model.addAttribute("nextPageNumber", nextPageNumber);
+        Movie.ScreeningStatus screeningStatus = null;
+        if (status != null && !status.isEmpty()) {
+            try {
+                screeningStatus = Movie.ScreeningStatus.valueOf(status);
+            } catch (IllegalArgumentException e) {
+                screeningStatus = null;  // 잘못된 status 무시
+            }
+        }
 
+        Page<MovieDto> movies = movieService.getMoviesByRank(pageable, currentMemberId, screeningStatus);
 
         for (MovieDto movieDto : movies.getContent()) {
-            // null 값 처리
             handleNullValues(movieDto);
         }
 
         model.addAttribute("movies", movies);
-        model.addAttribute("title", "영화 목록");
-        model.addAttribute("timestamp", System.currentTimeMillis());
+
+        // 다음 페이지 번호 계산 (movies.number는 현재 페이지 번호, 0부터 시작)
+        int nextPageNumber = movies.getNumber() + 1;
+        model.addAttribute("nextPageNumber", nextPageNumber);
+        for (MovieDto movieDto : movies.getContent()) {
+            handleNullValues(movieDto);
+        }
+
         model.addAttribute("currentStatus", status); // 현재 선택된 상태를 모델에 추가
 
         model.addAttribute("nextPageNumber", movies.getNumber() + 1);
         model.addAttribute("hasNext", movies.hasNext());
-
-        // 페이지네이션을 위한 값들 추가
         model.addAttribute("hasPrevious", movies.hasPrevious());
         model.addAttribute("prevPage", Math.max(0, movies.getNumber() - 1));
         model.addAttribute("nextPage", Math.min(movies.getTotalPages() - 1, movies.getNumber() + 1));
@@ -110,31 +118,41 @@ public class MovieController {
     }
 
     // "더보기" 버튼 클릭 시 호출될 AJAX 전용 엔드포인트 (HTML 조각 반환)
-    // MovieApiController의 /api/movies와 충돌하지 않도록 새로운 경로를 사용합니다.
-    @GetMapping("/loadMore") // <-- 새로운 경로 추가
+    @GetMapping("/loadMore")
     public String loadMoreMovies(@RequestParam(required = false) String status,
                                  @RequestParam(defaultValue = "0") int page,
-                                 Model model) {
+                                 Model model, HttpSession session) {
 
-        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdAt").descending());
+        // 세션에서 로그인된 사용자 정보 가져오기
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        String currentMemberId = loginMember != null ? loginMember.getMemberId() : null;
 
-        Page<MovieDto> movies;
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("rank").descending());
+
+        Movie.ScreeningStatus screeningStatus = null;
 
         if (status != null && !status.isEmpty()) {
             try {
-                Movie.ScreeningStatus screeningStatus = Movie.ScreeningStatus.valueOf(status);
-                movies = movieService.getMoviesByScreeningStatus(screeningStatus, pageable);
+                screeningStatus = Movie.ScreeningStatus.valueOf(status);
             } catch (IllegalArgumentException e) {
-                movies = movieService.getMoviesPaginated(pageable);
+                screeningStatus = null; // 유효하지 않은 값일 경우 null로 처리
             }
+        }
+
+        Page<MovieDto> movies;
+
+        if (screeningStatus != null) {
+            // 상영 상태 필터가 있으면, 필터 포함된 rank 순 조회
+            movies = movieService.getMoviesByRank(pageable, currentMemberId, screeningStatus);
         } else {
-            movies = movieService.getMoviesPaginated(pageable);
+            // 필터 없으면 그냥 rank 순 조회
+            movies = movieService.getMoviesByRank(pageable, currentMemberId, null);
         }
 
         model.addAttribute("movies", movies.getContent());
         model.addAttribute("hasNext", movies.hasNext());
 
-        return "movies/movie-items-partial"; // 이 템플릿 파일을 확인해주세요.
+        return "movies/movie-items-partial";
     }
 
     // 페이지 항목을 위한 내부 클래스
@@ -145,10 +163,15 @@ public class MovieController {
         private boolean active;
     }
 
-
     @GetMapping("/{id}")
-    public String viewMovie(@PathVariable("id") Long id, Model model) {
-        Optional<MovieDto> movieDtoOptional = movieService.getMovieById(id);
+    public String viewMovie(@PathVariable("id") Long id, Model model, HttpSession session) {
+
+        // 세션에서 로그인된 사용자 정보 가져오기
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        String currentMemberId = loginMember != null ? loginMember.getMemberId() : null;
+
+        // currentMemberId 전달
+        Optional<MovieDto> movieDtoOptional = movieService.getMovieById(id, currentMemberId);
 
         if (movieDtoOptional.isPresent()) {
             MovieDto movieDto = movieDtoOptional.get();
@@ -191,8 +214,12 @@ public class MovieController {
                 model.addAttribute("subImageUrlList", subImageUrlList);
             }
 
+            // 로그인된 사용자 정보 가져오기
+            String currentUserId = loginMember != null ? loginMember.getMemberId() : null;
+            model.addAttribute("loginMember", loginMember); // 뷰용..
+
             // 리뷰 목록 조회
-            List<ReviewDto> reviews = reviewService.getReviewsByMovieId(id);
+            List<ReviewDto> reviews = reviewService.getReviewsByMovieId(id, currentUserId);
             model.addAttribute("reviews", reviews);
 
             // 긍정 평가 비율 계산
@@ -202,10 +229,20 @@ public class MovieController {
             // movieId 값을 모델에 추가
             model.addAttribute("movieId", id);
 
-            model.addAttribute("title", id);
-            model.addAttribute("timestamp", System.currentTimeMillis());
+            // 영화 전체 리스트로 rank 포함 DTO 리스트 조회
+            List<MovieDto> rankedMovies = movieService.getMoviesWithStats(currentMemberId);
+
+            // 현재 영화의 rank 찾기
+            int rank = rankedMovies.stream()
+                    .filter(m -> m.getMovieId().equals(id))
+                    .map(MovieDto::getRank)
+                    .findFirst()
+                    .orElse(0);
+
+            movieDto.setRank(rank);
 
             model.addAttribute("movie", movieDto);
+
             return "movies/view";
         } else {
             return "redirect:/movies";
@@ -282,7 +319,7 @@ public class MovieController {
     // 영화 수정 폼
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Optional<MovieDto> movieDtoOptional = movieService.getMovieById(id);
+        Optional<MovieDto> movieDtoOptional = movieService.getMovieById(id, null);
 
         if (movieDtoOptional.isPresent()) {
             MovieDto movieDto = movieDtoOptional.get();
@@ -386,9 +423,22 @@ public class MovieController {
     public String searchMovies(@RequestParam(value = "keyword", required = false) String keyword,
                                @RequestParam(required = false) String status,
                                Model model,
-                               @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+                               @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, HttpSession session) {
 
         Page<MovieDto> movies;
+
+        // 세션에서 로그인된 사용자 정보 가져오기 (다른 메서드와 일치시킴)
+        Object sessionAttribute = session.getAttribute("loginMember");
+        String currentMemberId = null;
+
+        if (sessionAttribute instanceof Member) {
+            Member loginMember = (Member) sessionAttribute;
+            currentMemberId = loginMember.getMemberId();
+            System.out.println("검색 - 로그인된 사용자 ID: " + currentMemberId);
+        } else {
+            currentMemberId = "test2"; // 임시 ID (다른 메서드와 일치시킴)
+            System.out.println("검색 - 임시 ID 사용: " + currentMemberId);
+        }
 
         // 키워드가 있는 경우 검색 수행
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -396,24 +446,24 @@ public class MovieController {
             if (status != null && !status.isEmpty()) {
                 try {
                     Movie.ScreeningStatus screeningStatus = Movie.ScreeningStatus.valueOf(status);
-                    movies = movieService.searchMoviesByKeywordAndStatus(keyword, screeningStatus, pageable);
+                    movies = movieService.searchMoviesByKeywordAndStatus(keyword, screeningStatus, pageable, currentMemberId);
                 } catch (IllegalArgumentException e) {
-                    movies = movieService.searchMoviesByKeyword(keyword, pageable);
+                    movies = movieService.searchMoviesByKeyword(keyword, pageable, currentMemberId);
                 }
             } else {
-                movies = movieService.searchMoviesByKeyword(keyword, pageable);
+                movies = movieService.searchMoviesByKeyword(keyword, pageable, currentMemberId);
             }
         } else {
             // 키워드가 없는 경우 상영 상태별 필터링만 수행
             if (status != null && !status.isEmpty()) {
                 try {
                     Movie.ScreeningStatus screeningStatus = Movie.ScreeningStatus.valueOf(status);
-                    movies = movieService.getMoviesByScreeningStatus(screeningStatus, pageable);
+                    movies = movieService.getMoviesByScreeningStatus(screeningStatus, pageable, currentMemberId);
                 } catch (IllegalArgumentException e) {
-                    movies = movieService.getMoviesPaginated(pageable);
+                    movies = movieService.getMoviesPaginated(pageable, currentMemberId);
                 }
             } else {
-                movies = movieService.getMoviesPaginated(pageable);
+                movies = movieService.getMoviesPaginated(pageable, currentMemberId);
             }
         }
 

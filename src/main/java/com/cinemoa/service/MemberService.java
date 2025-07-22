@@ -320,7 +320,7 @@ public class MemberService {
                             : 0;
 
                     // 관람평 조회
-                    var reviewOpt = reviewRepository.findByMovieIdAndUserId(movie.getMovieId(), memberId);
+                    var reviewOpt = reviewRepository.findByMovie_MovieIdAndUser_MemberId(movie.getMovieId(), memberId);
                     boolean hasReview = reviewOpt.isPresent();
                     String reviewContent = hasReview ? reviewOpt.get().getContent() : null;
 

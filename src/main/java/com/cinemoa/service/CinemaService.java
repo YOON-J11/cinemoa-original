@@ -14,7 +14,7 @@ public class CinemaService {
     private final CinemaRepository cinemaRepository;
 
     public List<Cinema> getAllCinemas() {
-        return cinemaRepository.findAll();
+        return cinemaRepository.findAllByOrderByCinemaIdAsc();
     }
 
     public List<Cinema> getCinemasByRegion(String region) {

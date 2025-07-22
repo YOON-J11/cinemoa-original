@@ -1,11 +1,10 @@
-<link rel="stylesheet" href="/css/movies.css" />
 {{> common/header }}
+<link rel="stylesheet" href="/css/movies.css" />
 <a href="/movies/new">등록하기</a>
 <a href="/movies?status=NOT_SHOWING">상영안함</a>
 
 <div class="container movies">
     <div class="movie-chart">
-
         <div class="tit">
             <h1>무비차트</h1>
             <div class="status-tab">
@@ -33,7 +32,15 @@
                     <div class="item-wrap">
 
                         {{#mainImageUrl}}
-                        <div class="main-image"><img src="/images/movie/{{mainImageUrl}}" alt="{{title}}"></div>
+                        <div class="main-image">
+                            <div class="over_box">
+                                <div class="inner">
+                                    <a href="/ticketing/{{movieId}}">예매하기</a>
+                                    <a href="/movies/{{movieId}}">상세정보</a>
+                                </div>
+                            </div>
+                            <img src="/images/movie/{{mainImageUrl}}" alt="{{title}}">
+                        </div>
                         {{/mainImageUrl}}
                         {{^mainImageUrl}}
                             <div class="main-image empty">>이미지 없음</div>
@@ -67,8 +74,8 @@
                             </span>
                         </div>
                         <div class="item-btn">
-                            <div class="like-btn">
-                                <button class="heart-button">
+                            <div class="like-btn" data-movie-id="{{movieId}}">
+                                <button class="heart-button {{#loginMember}}{{#likedByCurrentUser}}active{{/likedByCurrentUser}}{{/loginMember}}{{^loginMember}}disable{{/loginMember}}">
                                 <svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" id="heart" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M13.91,6.75c-1.17,2.25-4.3,5.31-6.07,6.94c-0.1903,0.1718-0.4797,0.1718-0.67,0C5.39,12.06,2.26,9,1.09,6.75&#xA;&#x9;C-1.48,1.8,5-1.5,7.5,3.45C10-1.5,16.48,1.8,13.91,6.75z" stroke="black"/>
                                 </svg>
@@ -77,73 +84,190 @@
                             </div>
                             <a href="/ticketing/{{movieId}}" class="reservation-btn">예매하기</a>
                         </div>
-                        <a href="/movies/{{movieId}}">상세보기</a>
                     </div>
                 </div>
             {{/movies.content}}
         </div>
-    </div>
-
-    <div class="more-btn-wrap text-center">
-        {{#movies.hasNext}}
-            <button type="button" class="btn-more" id="btnLoadMore" data-next-page="{{nextPageNumber}}">더보기</button>
-        {{/movies.hasNext}}
+        <div class="more-btn-wrap">
+            {{#movies.hasNext}}
+                <button type="button" class="btn-more" id="btnLoadMore" data-next-page="{{nextPageNumber}}"><span>더보기</span><img src="https://img.megabox.co.kr/static/pc/images/common/ico/ico-btn-more-arr.png"></button>
+            {{/movies.hasNext}}
+        </div>
     </div>
 </div>
 
 <script>
+    // 숫자를 K, M, G, T 형식으로 변환하는 함수 (전역으로 정의)
+    function formatNumber(num) {
+        if (num < 1000) {
+            return num.toString();
+        } else if (num < 1000000) {
+            return (Math.floor(num / 100) / 10) + 'K';
+        } else if (num < 1000000000) {
+            return (Math.floor(num / 100000) / 10) + 'M';
+        } else if (num < 1000000000000) {
+            return (Math.floor(num / 100000000) / 10) + 'G';
+        } else {
+            return (Math.floor(num / 100000000000) / 10) + 'T';
+        }
+    }
+
+    function parseFormattedNumber(text) {
+        const unitMatch = text.trim().match(/([0-9.]+)([KMGT]?)$/);
+        if (!unitMatch) return 0;
+
+        const value = parseFloat(unitMatch[1]);
+        const unit = unitMatch[2];
+
+        switch (unit) {
+            case 'K': return value * 1_000;
+            case 'M': return value * 1_000_000;
+            case 'G': return value * 1_000_000_000;
+            case 'T': return value * 1_000_000_000_000;
+            default: return value;
+        }
+    }
+
+    // 영화 아이템에 대한 동적 동작을 적용하는 함수
+    function applyBehaviorsToMovieItems(container) {
+        // 날짜 형식 변환 (yyyy-MM-dd -> yyyy.MM.dd)
+        container.querySelectorAll('.format-date').forEach(function(element) {
+            const originalDate = element.textContent;
+            if (originalDate) {
+                const parts = originalDate.split('-');
+                if (parts.length === 3) {
+                    element.textContent = parts.join('.');
+                }
+            }
+        });
+
+        // 'rating' 클래스를 가진 모든 요소를 찾아서 소수점 첫째자리까지만 표시
+        container.querySelectorAll('.rating').forEach(function(element) {
+            const text = element.textContent;
+            const value = parseFloat(text);
+            if (!isNaN(value)) {
+                const truncatedValue = Math.floor(value * 10) / 10;
+                if (text.includes('%')) {
+                    element.textContent = truncatedValue + '%';
+                } else {
+                    element.textContent = truncatedValue;
+                }
+            }
+        });
+
+        // 좋아요 수 포맷 처리 (기존에 이미 포맷된 값이면 무시)
+        container.querySelectorAll('.likesCount').forEach(function(element) {
+            const originalText = element.textContent.trim();
+
+            // 이미 단위가 붙은 경우 건너뛰기 (예: '2.5K')
+            if (/[KMGT]$/.test(originalText)) return;
+
+            const count = parseInt(originalText.replace(/,/g, ''));
+            if (!isNaN(count)) {
+                element.textContent = formatNumber(count);
+            }
+        });
+
+        // ========== 좋아요 버튼 이벤트 리스너 추가 시작 ==========
+        container.querySelectorAll('.like-btn').forEach(likeBtnDiv => {
+            const button = likeBtnDiv.querySelector('.heart-button');
+            const likesCountSpan = likeBtnDiv.querySelector('.likesCount');
+            const movieId = likeBtnDiv.dataset.movieId;
+
+            if (!button || !likesCountSpan || !movieId) {
+                console.warn("좋아요 버튼 요소 또는 movieId를 찾을 수 없습니다.");
+                return;
+            }
+
+            button.addEventListener('click', function () {
+                fetch(`/api/movies/${movieId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        return response.text().then(errorMessage => {
+                            throw new Error(errorMessage || "좋아요 처리 중 알 수 없는 오류가 발생했습니다.");
+                        });
+                    }
+                })
+                .then(message => {
+                    alert(message);
+
+                    let currentLikes = parseFormattedNumber(likesCountSpan.textContent);
+
+                    if (message.includes("추가되었습니다")) {
+                        currentLikes++;
+                        likesCountSpan.textContent = formatNumber(currentLikes);
+                        button.classList.add('active');
+                    } else if (message.includes("취소되었습니다")) {
+                        currentLikes--;
+                        likesCountSpan.textContent = formatNumber(currentLikes);
+                        button.classList.remove('active');
+                    }
+                })
+                .catch(error => {
+                    console.error('좋아요 처리 중 에러:', error);
+                    alert('좋아요 처리 중 에러가 발생했습니다: ' + error.message);
+                });
+            });
+
+        });
+        // ========== 좋아요 버튼 이벤트 리스너 추가 끝 ==========
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // 현재 URL 가져오기
         const urlParams = new URLSearchParams(window.location.search);
         const status = urlParams.get('status');
 
-        // sort 클래스 요소 선택
+        // sort 클래스 요소 선택 및 표시/숨김
         const sortElement = document.querySelector('.sort');
-
-        // status가 COMING_SOON인 경우 sort 클래스 숨기기
         if (status === 'COMING_SOON') {
             if (sortElement) {
                 sortElement.style.display = 'none';
             }
         } else {
             if (sortElement) {
-                sortElement.style.display = 'flex'; // 또는 'block'
+                sortElement.style.display = 'flex';
             }
         }
+
+         // 초기 로드 시 기존 영화 아이템들에 대한 동작 적용
+        applyBehaviorsToMovieItems(document.querySelector('.movie-list'));
 
         // 탭 활성화 코드
         const tabItems = document.querySelectorAll('.tab-item');
         tabItems.forEach(function(item) {
-        const itemUrl = item.getAttribute('href');
-
-        // '무비차트' 탭 활성화 로직 수정
-        if (itemUrl === '/movies') { // '무비차트' 탭인 경우
-            if (status === null || status === 'NOW_SHOWING') { // status 파라미터가 없거나 NOW_SHOWING일 때
-                item.classList.add('active');
+            const itemUrl = item.getAttribute('href');
+            if (itemUrl === '/movies') {
+                if (status === null || status === 'NOW_SHOWING') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
             } else {
-                item.classList.remove('active');
+                const itemStatus = new URLSearchParams(itemUrl.split('?')[1]).get('status');
+                if (status !== null && status === itemStatus) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
             }
-        } else { // '상영예정작' 탭인 경우
-            const itemStatus = new URLSearchParams(itemUrl.split('?')[1]).get('status');
-            if (status !== null && status === itemStatus) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        }
-    });
+        });
 
-        // 온에어 토글 체크박스 코드 - 새로운 HTML 구조에 맞게 수정
+        // 온에어 토글 체크박스 코드
         const onairToggle = document.getElementById('onairToggle');
         if (onairToggle) {
-            // 현재 상태에 따라 체크박스 상태 설정
             if (status === 'NOW_SHOWING') {
                 onairToggle.checked = true;
             } else {
                 onairToggle.checked = false;
             }
-
-            // 체크박스 변경 이벤트 처리
             onairToggle.addEventListener('change', function() {
                 if (this.checked) {
                     window.location.href = '/movies?status=NOW_SHOWING';
@@ -153,31 +277,75 @@
             });
         }
 
+        // 검색 버튼 클릭 이벤트 처리
+        const btnSearch = document.getElementById('btnSearch');
+        const searchKeyword = document.getElementById('searchKeyword');
+        if (btnSearch && searchKeyword) {
+            btnSearch.addEventListener('click', function() {
+                performSearch();
+            });
+            searchKeyword.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            function performSearch() {
+                const keyword = searchKeyword.value.trim();
+                if (keyword) {
+                    const currentStatus = urlParams.get('status');
+                    let searchUrl = '/movies/search?keyword=' + encodeURIComponent(keyword);
+                    if (currentStatus) {
+                        searchUrl += '&status=' + currentStatus;
+                    }
+                    window.location.href = searchUrl;
+                } else {
+                    alert('검색할 영화명을 입력하세요.');
+                }
+            }
+        }
+
+        // 초기 로드된 영화 목록에 동작 적용
+        const movieListContainer = document.querySelector('.movie-list');
+        if (!movieListContainer) {
+            console.error('movieListContainer가 존재하지 않습니다.');
+            return;
+        }
+
+        // 날짜, 좋아요 수 포맷 등 초기 적용
+        applyBehaviorsToMovieItems(movieListContainer);
+
+         // 좋아요 버튼 클릭 이벤트 위임
+        movieListContainer.addEventListener('click', function(event) {
+            const heartBtn = event.target.closest('.heart-button');
+            if (heartBtn && movieListContainer.contains(heartBtn)) {
+                heartBtn.classList.toggle('active');
+            }
+        });
+
         // 더보기 버튼 이벤트 처리
         const btnLoadMore = document.getElementById('btnLoadMore');
         if (btnLoadMore) {
             btnLoadMore.addEventListener('click', function() {
                 const nextPage = this.getAttribute('data-next-page');
-                const movieListContainer = document.querySelector('.movie-list');
-
-                // 현재 URL에서 status 파라미터 가져오기
                 const currentStatus = urlParams.get('status');
 
-                // AJAX 요청 URL 구성
                 let url = `/movies/loadMore?page=${nextPage}`;
                 if (currentStatus) {
                     url += `&status=${currentStatus}`;
                 }
 
-                // 로딩 표시
                 this.innerHTML = '로딩 중...';
                 this.disabled = true;
 
-                // AJAX 요청
                 fetch(url)
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.text();
+                    })
                     .then(html => {
-                        // 기존 영화 목록에 새로운 영화 추가
                         const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = html;
                         const newMovies = tempDiv.querySelectorAll('.item');
@@ -186,18 +354,16 @@
                             movieListContainer.appendChild(movie);
                         });
 
+                        applyBehaviorsToMovieItems(movieListContainer);
 
-                        // 다음 페이지가 있는지 확인
-                        const hasNextPageElement = tempDiv.querySelector('[data-has-next]'); // data-has-next 속성을 가진 요소를 찾음
-                        const hasNextPage = hasNextPageElement ? hasNextPageElement.getAttribute('data-has-next') === 'true' : false; // 그 요소의 속성값이 'true'인지 확인
+                        const hasNextPageElement = tempDiv.querySelector('[data-has-next]');
+                        const hasNextPage = hasNextPageElement ? hasNextPageElement.getAttribute('data-has-next') === 'true' : false;
 
                         if (hasNextPage) {
-                            // 다음 페이지 번호 업데이트
                             this.setAttribute('data-next-page', parseInt(nextPage) + 1);
                             this.innerHTML = '더보기';
                             this.disabled = false;
                         } else {
-                            // 더 이상 페이지가 없으면 버튼 제거
                             this.parentNode.innerHTML = '';
                         }
                     })
@@ -208,116 +374,6 @@
                     });
             });
         }
-
-        // 날짜 형식 변환 (yyyy-MM-dd -> yyyy.MM.dd)
-        const dateElements = document.querySelectorAll('.format-date');
-        dateElements.forEach(function(element) {
-            const originalDate = element.textContent;
-            if (originalDate) {
-                const parts = originalDate.split('-');
-                if (parts.length === 3) {
-                    element.textContent = parts.join('.');
-                }
-            }
-        });
-
-        // 검색 버튼 클릭 이벤트 처리
-        const btnSearch = document.getElementById('btnSearch');
-        const searchKeyword = document.getElementById('searchKeyword');
-
-        if (btnSearch && searchKeyword) {
-            // 검색 버튼 클릭 시
-            btnSearch.addEventListener('click', function() {
-                performSearch();
-            });
-
-            // 엔터키 입력 시
-            searchKeyword.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            // 검색 실행 함수
-            function performSearch() {
-                const keyword = searchKeyword.value.trim();
-                if (keyword) {
-                    // 현재 URL에서 status 파라미터 유지
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const status = urlParams.get('status');
-
-                    // 검색 URL 구성
-                    let searchUrl = '/movies/search?keyword=' + encodeURIComponent(keyword);
-                    if (status) {
-                        searchUrl += '&status=' + status;
-                    }
-
-                    // 페이지 이동
-                    window.location.href = searchUrl;
-                } else {
-                    alert('검색할 영화명을 입력하세요.');
-                }
-            }
-        }
     });
-
-    // 'rating' 클래스를 가진 모든 요소를 찾아서 소수점 첫째 자리까지만 표시
-    const ratingElements = document.querySelectorAll('.rating');
-
-    ratingElements.forEach(function(element) {
-        const text = element.textContent;
-        const value = parseFloat(text);
-
-        if (!isNaN(value)) {
-          // 소수점 첫째 자리까지만 표시 (둘째 자리에서 버림)
-          const truncatedValue = Math.floor(value * 10) / 10;
-
-          // % 기호가 있는지 확인하여 유지
-          if (text.includes('%')) {
-            element.textContent = truncatedValue + '%';
-          } else {
-            element.textContent = truncatedValue;
-          }
-        }
-    });
-
-    let heartButtons = document.querySelectorAll(".heart-button");
-    heartButtons.forEach((button) => {
-        button.addEventListener("click", (event) => {
-            button.classList.toggle("active");
-        });
-    });
-
-  // 좋아요 개수를 표시하는 모든 span 요소
-  const likeCountElements = document.querySelectorAll('.likesCount');
-
-  likeCountElements.forEach(function(element) {
-    const count = parseInt(element.textContent);
-
-    if (!isNaN(count)) {
-      // 숫자 형식 변환 함수 호출
-      element.textContent = formatNumber(count);
-    }
-  });
-
-  // 숫자를 K, M, G, T 형식으로 변환하는 함수
-  function formatNumber(num) {
-    if (num < 1000) {
-      return num; // 1000 미만은 그대로 표시
-    } else if (num < 1000000) {
-      // 1K ~ 999K (천 단위)
-      return (Math.floor(num / 100) / 10) + 'K';
-    } else if (num < 1000000000) {
-      // 1M ~ 999M (백만 단위)
-      return (Math.floor(num / 100000) / 10) + 'M';
-    } else if (num < 1000000000000) {
-      // 1G ~ 999G (십억 단위)
-      return (Math.floor(num / 100000000) / 10) + 'G';
-    } else {
-      // 1T 이상 (조 단위)
-      return (Math.floor(num / 100000000000) / 10) + 'T';
-    }
-  }
 </script>
-
 {{> common/footer }}

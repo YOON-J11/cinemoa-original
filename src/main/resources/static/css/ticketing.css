@@ -1,14 +1,124 @@
-*{outline:none; border: none;}
+*{outline:none; border: none; background: transparent; font: inherit;}
 *, :after, :before {box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;}
 .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     color: #222;
+    width: 1200px;
 }
 
-.ticketing {padding: 2.5rem 0;}
+.ticketing-wrap {padding: 3rem 0; }
 
-movie-choice, theater-choice, .time-choice {
-width: calc(100% / 3);
+.ticketing-wrap .inner {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-height: 650px;
+    overflow: hidden;
 }
+
+.movie-choice, .theater-choice, .time-choice {
+    width: calc(100% / 3);
+    border-left: 1px solid #ccc;
+    overflow: hidden;
+}
+.step {
+    overflow: hidden;
+    height: 100%;
+}
+
+.time-choice {
+    border-right: 1px solid #ccc;
+}
+.time-choice #step4 {padding: 1rem;     border-bottom: 1px solid #ccc;}
+.time-choice button.date-optionbutton {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+}
+
+#availableDates {
+    display: flex;
+    overflow-x: scroll;
+    width: 100%;
+    gap: .5rem;
+}
+.time-slot {
+    border-bottom: 1px solid #ccc;
+    padding: 1rem;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.time-slot.selected {
+    background: #ebebeb;
+}
+
+.time-slot strong {
+    line-height: 1.2;
+}
+.time-slot .start-time {
+    font-weight: 600;
+    font-size: 20px;
+}
+.time-slot .info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 14px;
+    gap: 5px;
+}
+
+.time-slot .info span:nth-child(2) {
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 20px;
+    border-bottom: 1px solid #ccc;
+    font-weight: 600;
+    padding: 0 1rem;
+    line-height: 50px;
+    height: 50px;
+}
+
+#movieList {
+    padding: 1rem;
+    overflow-y: scroll;
+    height: calc(100% - 50px);
+}
+
+.movie-item {
+    padding: 10px 5px ;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.movie-item .tit {display:flex;}
+
+.movie-item.selected {
+    background: #006f7c;
+    color: #fff;
+}
+.theater-wrap {display: flex; height: calc(100% - 50px);}
+.theater-wrap .step {width: 50%; }
+.theater-wrap button {
+    padding: 10px 5px;
+    transition: .3s;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+#regionList { border-right: 1px solid #ccc; height: 100%; padding: 1rem}
+#cinemaList {height: 100%; padding: 1rem;}
+
+.running-time {opacity:0;}
+.btn-primary { background: #006f7c; color: #fff;}

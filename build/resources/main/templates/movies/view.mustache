@@ -1,10 +1,14 @@
-<link rel="stylesheet" href="/css/movie.css" />
 {{> common/header }}
-<div class="container movie">
+<link rel="stylesheet" href="/css/movies.css" />
+<div class="container movies">
     <div class="content-wrap">
         <div class="content">
             <div class="movie-detail">
                 {{#movie}}
+                    <div class="admin-btn">
+                        <a href="/movies/{{movieId}}/edit" class="btn btn-primary">수정</a>
+                        <button type="button" class="btn btn-danger" onclick="deleteMovie({{movieId}})">삭제</button>
+                    </div>
                     <div class="movie-info-wrap">
                         <div class="poster">
                             {{#mainImageUrl}}
@@ -15,185 +19,247 @@
                             {{/mainImageUrl}}
                         </div>
                         <div class="movie-info">
-                           <h2 class="tit">{{title}}</h2>
-                            <ul class="info1">
-                                <li>
-                                    <span class="date">
-                                        {{#releaseDate}}{{releaseDate}}개봉{{/releaseDate}}
-                                        {{^releaseDate}}미정{{/releaseDate}}
-                                    </span>
-                                </li>
-                                <li><span class="time">{{runningTime}}</span>분</li>
-                                <li>{{ageRating}}</li>
-                            </ul>
-                            <div class="info2">
-                                <p>감독: {{director}}</p>
-                                <p>배우: {{actors}}</p>
-                                <p>장르: {{genre}}</p>
+                           <div class="movie-info-top">
+                               <h2 class="tit">{{title}}</h2>
+                                <ul class="info1">
+                                    <li>
+                                        <p class="date">
+                                            {{#releaseDate}}<span class="bold600 format-date">{{releaseDate}}</span> 개봉{{/releaseDate}}
+                                            {{^releaseDate}}미정{{/releaseDate}}
+                                        </p>
+                                    </li>
+                                    <li class="flex-center "><img src="https://www.lottecinema.co.kr/NLCHS/Content/images/icon/icon_clock_black.svg"><span class="time bold600 pl-5">{{runningTime}}</span>분</li>
+                                    <li class="age bold600">{{ageRating}}</li>
+                                </ul>
+                                <div class="info2">
+                                    <p>감독 : {{director}}</p>
+                                    <p>배우 : {{actors}}</p>
+                                    <p>장르 : {{genre}}</p>
+                                </div>
+                                <div class="info3">
+                                    <a href="{{^loginMember}}/member/login{{/loginMember}}" class="like">
+                                        <div class="like-btn" data-movie-id="{{movieId}}">
+                                            <button class="heart-button {{#loginMember}}{{#likedByCurrentUser}}active{{/likedByCurrentUser}}{{/loginMember}}">
+                                                <svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" id="heart" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13.91,6.75c-1.17,2.25-4.3,5.31-6.07,6.94c-0.1903,0.1718-0.4797,0.1718-0.67,0C5.39,12.06,2.26,9,1.09,6.75&#xA;&#x9;C-1.48,1.8,5-1.5,7.5,3.45C10-1.5,16.48,1.8,13.91,6.75z" stroke="black"/>
+                                                </svg>
+                                            </button>
+                                            <span class="likesCount">{{likesCount}}</span>
+                                        </div>
+                                    </a>
+                                    <a href="/ticketing/{{movieId}}" class="ticketing-btn">예매하기</a>
+                                </div>
+                           </div>
+                            <div class="info4 score">
+                                <div class="rate">
+                                    <h5>실관람 평점</h5>
+                                    <p class="progress">
+                                        <span aria-valuenow="{{positivePercentage}}" aria-valuemin="0" aria-valuemax="100">{{positivePercentage}}%</span>
+                                    </p>
+                                </div>
+                                <div class="reservation">
+                                    <h5>예매율</h5>
+                                    <p><span>{{rank}}위</span>({{reservationRate}}%)</p>
+                                </div>
+                                <div class="audience">
+                                    <h5>누적관객수</h5>
+                                    <p><span class="audience-counting">{{audienceCount}}</span></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="movie-cont-wrap">
 
                         <ul class="tab">
-                            <li>상세정보</li>
+                            <li class="on">상세정보</li>
                             <li>관람평</li>
                             <li>예고편/스틸컷</li>
                         </ul>
 
-                        <p class="movie-cont">{{{content}}}</p>
-                        <div class="score">
-                            <div class="rate">
-                                <h5><span class="text-warning">★</span> 평점</h5>
-                                <p><span class="rating">{{rating}}</span>%</p>
-                            </div>
-                            <div class="reservation">
-                                <h5>예매율</h5>
-                                <p><span class="rating">{{reservationRate}}</span>%</p>
-                            </div>
-                            <div class="audience">
-                                <h5>관객수</h5>
-                                <p>{{audienceCount}}명</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="">
-                            <div class="like">
-                                <h5>좋아요</h5>
-                                <p>{{likesCount}}</p>
-                            </div>
-                            <div class="review">
-                                <h5>리뷰</h5>
-                                <p>{{reviewCount}}</p>
-                            </div>
-                        </div>
-
-                        {{#videoUrl}}
-                            <hr>
-                            <h4>예고편</h4>
-                            <div class="embed-responsive embed-responsive-16by9 mb-3">
-                                <iframe class="embed-responsive-item" src="{{videoUrl}}" allowfullscreen
-                                        style="width:100%; height:400px;"></iframe>
-                            </div>
-                        {{/videoUrl}}
-
-                        {{#subImageUrls}}
-                            <hr>
-                            <h4>서브 이미지</h4>
-                            <div class="detail-images-gallery">
-                                <div class="detail-image-item mb-3">
-                                    <img src="/images/movie/{{subImageUrls}}" class="img-fluid rounded" alt="서브 이미지">
-                                </div>
-                            </div>
-                        {{/subImageUrls}}
-
-                        {{#detailImageUrls}}
-                            <hr>
-                            <h4>상세 이미지</h4>
-                            <div class="detail-images-gallery">
-                                {{#detailImageUrlList}}
-                                    <div class="detail-image-item mb-3">
-                                        <img src="/images/movie/{{.}}" class="img-fluid rounded" alt="상세 이미지">
+                        <ul class="tab_cont">
+                            <li class="on">
+                                <div class="inner">
+                                    <p class="movie-cont">{{{content}}}</p>
+                                    <!-- 리뷰 목록 -->
+                                    <div class="review-top">
+                                        <div class="alert-info">
+                                            <p class="pb-25">영화의 어떤 점이 좋았는지 이야기해주세요!</p>
+                                            {{#loginMember}}
+                                                <button type="button" class="btn-review" data-bs-toggle="modal" data-bs-target="#reviewModal" data-movie-id="{{movieId}}">
+                                                    실관람평 작성하기
+                                                </button>
+                                            {{/loginMember}}
+                                            {{^loginMember}}
+                                                <a href="/member/login" class="">실관람평 작성하기</a>
+                                            {{/loginMember}}
+                                        </div>
+                                        <h4 class="bold600">실관람평 {{reviews.size}}</h4>
                                     </div>
-                                {{/detailImageUrlList}}
-                            </div>
-                        {{/detailImageUrls}}
+                                    <div class="review-list">
+                                    {{#reviews}}
+                                        <div class="card">
+                                            <div class="card-inner">
+                                                <div class="cart-cont">
+                                                    <p class="user bold600">{{userName}}</p>
+                                                    <p class="date">{{createdAt}}</p>
+                                                    <p class="card-text">{{{content}}}</p>
+                                                    {{#deletable}}
+                                                    <div class="btn-wrap">
+                                                        <button class="edit-review-btn" data-review-id="{{reviewId}}">수정</button>
+                                                        <a href="/reviews/delete/{{reviewId}}?movieId={{movieId}}" class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">삭제</a>
+                                                    </div>
+                                                    {{/deletable}}
+                                                </div>
+                                                <h5 class="card-title">
+                                                    {{#isPositive}}
+                                                        <span class="badge bg-success">좋았어요</span>
+                                                    {{/isPositive}}
+                                                    {{^isPositive}}
+                                                        <span class="badge bg-danger">별로였어요</span>
+                                                    {{/isPositive}}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    {{/reviews}}
+                                    {{^reviews}}
+                                        <div class="alert-info pt-20">
+                                            아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!
+                                        </div>
+                                    {{/reviews}}
+                                    </div>
+                                </div>
+                            </li>
 
-                        <hr>
-                        등록일: <span class="format-date">{{createdAt}}</span><br>
-                        수정일: <span class="format-date">{{updatedAt}}</span>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="/movies/{{movieId}}/edit" class="btn btn-primary me-2">수정하기</a>
-                        <button type="button" class="btn btn-danger me-2" onclick="deleteMovie({{movieId}})">삭제하기
-                        </button>
-                        <a href="/movies" class="btn btn-secondary">목록으로 돌아가기</a>
+                            <li>
+                                <div class="inner">
+                                    <!-- 리뷰 목록 -->
+                                    <div class="review-top">
+                                        <div class="alert-info">
+                                            <p class="pb-25">영화의 어떤 점이 좋았는지 이야기해주세요!</p>
+                                            {{#loginMember}}
+                                                <button type="button" class="btn-review" data-bs-toggle="modal" data-bs-target="#reviewModal" data-movie-id="{{movieId}}">
+                                                    실관람평 작성하기
+                                                </button>
+                                            {{/loginMember}}
+                                            {{^loginMember}}
+                                                <a href="/member/login" class="">실관람평 작성하기</a>
+                                            {{/loginMember}}
+                                        </div>
+                                        <h4 class="bold600">실관람평 {{reviews.size}}</h4>
+                                    </div>
+                                    <div class="review-list">
+                                        {{#reviews}}
+                                            <div class="card">
+                                                <div class="card-inner">
+                                                    <div class="cart-cont">
+                                                        <p class="user bold600">{{userName}}</p>
+                                                        <p class="date">{{createdAt}}</p>
+                                                        <p class="card-text">{{{content}}}</p>
+                                                        {{#deletable}}
+                                                            <div class="cart-delete">
+                                                                <a href="/reviews/delete/{{reviewId}}?movieId={{movieId}}" class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">삭제</a>
+                                                            </div>
+                                                        {{/deletable}}
+                                                    </div>
+                                                    <h5 class="card-title">
+                                                        {{#isPositive}}
+                                                            <span class="badge bg-success">좋았어요</span>
+                                                        {{/isPositive}}
+                                                        {{^isPositive}}
+                                                            <span class="badge bg-danger">별로였어요</span>
+                                                        {{/isPositive}}
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        {{/reviews}}
+                                        {{^reviews}}
+                                            <div class="alert-info pt-20">
+                                                아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!
+                                            </div>
+                                        {{/reviews}}
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="media">
+                                {{#videoUrl}}
+                                    <h4 class="pt-10 pb-20">트레일러</h4>
+                                    <div class="embed-responsive">
+                                        <iframe class="embed-responsive-item" src="{{videoUrl}}" allowfullscreen
+                                                style="width:100%; height:100%;"></iframe>
+                                    </div>
+                                {{/videoUrl}}
+                                {{#detailImageUrls}}
+                                    <h4 class="pt-50 pb-20">포스터/스틸컷</h4>
+                                    <div class="detail-images-gallery">
+                                        {{#detailImageUrlList}}
+                                            <div class="detail-image-item">
+                                                <img src="/images/movie/{{.}}" class="img-fluid rounded" alt="스틸컷">
+                                            </div>
+                                        {{/detailImageUrlList}}
+                                    </div>
+                                {{/detailImageUrls}}
+                            </li>
+                        </ul>
                     </div>
                 {{/movie}}
             </div>
         </div>
     </div>
-    <!-- 평점 표시 부분 추가 -->
-    <hr>
-    <h4>관람객 평점</h4>
-    <div class="row text-center">
-        <div class="col-md-6">
-            <div class="progress" style="height: 30px;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: {{positivePercentage}}%;"
-                     aria-valuenow="{{positivePercentage}}" aria-valuemin="0" aria-valuemax="100">
-                    {{positivePercentage}}%
-                </div>
-            </div>
-            <p class="mt-2"><span class="rating">{{positivePercentage}}</span>%의 관람객이 이 영화를 좋아했습니다.</p>
-        </div>
-        <div class="col-md-6">
-            <!-- 리뷰 작성 버튼 모달 트리거로 변경 -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal" data-movie-id="{{movieId}}">
-                리뷰 작성하기
-            </button>
-        </div>
-    </div>
-
-    <!-- 리뷰 목록 표시 부분 추가 -->
-    <hr>
-    <h4>관람객 리뷰 ({{reviews.size}})</h4>
-    {{#reviews}}
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <h5 class="card-title">
-                        {{#isPositive}}
-                            <span class="badge bg-success"><i class="bi bi-hand-thumbs-up"></i> 좋았어요</span>
-                        {{/isPositive}}
-                        {{^isPositive}}
-                            <span class="badge bg-danger"><i class="bi bi-hand-thumbs-down"></i> 별로였어요</span>
-                        {{/isPositive}}
-                    </h5>
-                    <small class="text-muted format-date">{{createdAt}}</small>
-                </div>
-                <p class="card-text">{{{content}}}</p>
-                <div class="d-flex justify-content-end">
-                    <a href="/reviews/delete/{{reviewId}}?movieId={{movieId}}" class="btn btn-sm btn-outline-danger"
-                    onclick="return confirm('정말로 이 리뷰를 삭제하시겠습니까?');">삭제</a>
-                </div>
-            </div>
-        </div>
-    {{/reviews}}
-    {{^reviews}}
-        <div class="alert alert-info">
-            아직 등록된 리뷰가 없습니다. 첫 번째 리뷰를 작성해보세요!
-        </div>
-    {{/reviews}}
 </div>
 
 <!-- 리뷰 작성 모달 -->
 <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="reviewModalLabel">리뷰 작성</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
-            </div>
             <div class="modal-body" id="reviewFormContainer">
-                <!-- 리뷰 폼 내용이 여기에 로드됩니다 -->
-                리뷰 폼 여기 나옴
+                <!-- 리뷰 폼 내용이 여기에 로드-->
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap JS 및 모달 로딩 스크립트 -->
+<!-- Bootstrap 5는 순수 JS 기반 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        // 로그인 여부와 상관없이 좋아요 숫자 포맷 적용 (단위 변환)
+            document.querySelectorAll('.likesCount').forEach(el => {
+            console.log('좋아요 원본:', el.textContent);
+            const originalText = el.textContent.trim();
+            if (!/[KMGT]$/.test(originalText)) {
+            const count = parseInt(originalText.replace(/,/g, ''));
+            if (!isNaN(count)) {
+            el.textContent = formatNumber(count);
+            console.log('좋아요 변환 후:', el.textContent);
+        }
+
+        // 탭
+        const tabHeaders = document.querySelectorAll('.tab li');
+        const tabContents = document.querySelectorAll('.tab_cont li');
+
+        // 각 탭 헤더(li)에 클릭 이벤트 리스너를 추가합니다.
+        tabHeaders.forEach((header, index) => {
+            header.addEventListener('click', function() {
+                tabHeaders.forEach(h => h.classList.remove('on'));
+                this.classList.add('on');
+
+                tabContents.forEach(content => content.classList.remove('on'));
+                tabContents[index].classList.add('on');
+            });
+        });
+
         var reviewModal = document.getElementById('reviewModal');
         reviewModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // 모달을 트리거한 버튼
-            var movieId = button.getAttribute('data-movie-id'); // data-movie-id 속성에서 영화 ID 추출
+            var button = event.relatedTarget;
+            var movieId = button.getAttribute('data-movie-id');
             var reviewFormContainer = document.getElementById('reviewFormContainer');
 
             // AJAX 요청으로 폼 내용 불러오기
-            fetch(`/reviews/new-fragment?movieId=${movieId}`) // 새로운 엔드포인트 호출
+            fetch(`/reviews/new-fragment?movieId=${movieId}`)
                 .then(response => response.text())
                 .then(html => {
                     reviewFormContainer.innerHTML = html;
@@ -210,10 +276,263 @@
         reviewModal.addEventListener('hidden.bs.modal', function () {
             document.getElementById('reviewFormContainer').innerHTML = '로딩 중...';
         });
+
+        $(document).on('click', '.edit-review-btn', function () {
+          const reviewId = $(this).data('review-id');
+          $.get(`/reviews/edit-fragment?reviewId=${reviewId}`, function (fragment) {
+            $('#reviewModal .modal-content').html(fragment);
+            $('#reviewModal').modal('show');
+          });
+        });
+
+        // 리뷰 유무
+        document.querySelector('.btn-review').addEventListener('click', function (e) {
+          e.preventDefault();
+
+          const movieId = this.getAttribute('data-movie-id');
+
+          fetch(`/reviews/check-review?movieId=${movieId}`)
+            .then(res => {
+              if (!res.ok) throw new Error('서버 응답 오류');
+              return res.text();
+            })
+            .then(text => {
+              const modalElement = document.getElementById('reviewModal');
+              const modal = new bootstrap.Modal(modalElement);
+
+              let data = null;
+              try {
+                data = text ? JSON.parse(text) : null;
+              } catch (err) {
+                console.warn('리뷰 JSON 파싱 실패:', text);
+                data = null;
+              }
+
+              if (data) {
+                // 이미 리뷰 있음 → 수정 폼 로드
+                fetch(`/reviews/edit-fragment?reviewId=${data.reviewId}`)
+                  .then(res => res.text())
+                  .then(html => {
+                    modalElement.querySelector('.modal-content').innerHTML = html;
+                    modal.show();
+                  });
+              } else {
+                // 리뷰 없음 → 새 리뷰 폼 로드
+                fetch(`/reviews/new-fragment?movieId=${movieId}`)
+                  .then(res => res.text())
+                  .then(html => {
+                    modalElement.querySelector('.modal-content').innerHTML = html;
+                    modal.show();
+                  });
+              }
+            })
+            .catch((err) => {
+              console.error('리뷰 체크 중 오류:', err);
+              alert('리뷰 정보를 불러오는데 실패했습니다.');
+            });
+        });
+
+        const container = document.querySelector('.container');
+
+        if (!container) {
+            console.error('container 요소를 찾을 수 없습니다.');
+            return;
+        }
+
+        // 좋아요 버튼 클릭 이벤트 처리
+        container.querySelectorAll(".heart-button").forEach((button) => {
+            // 새로 추가되는 요소에만 이벤트 리스너를 추가하는 것이 일반적이지만,
+            // 여기서는 container 전체를 다시 스캔하여 적용합니다.
+            // (이미 리스너가 있는 경우 중복 추가될 수 있으나, 대부분의 경우 문제가 되지 않습니다.)
+            button.addEventListener("click", (event) => {
+                button.classList.toggle("active");
+            });
+        });
+
+        // 좋아요 개수를 표시하는 모든 span 요소
+        container.querySelectorAll('.likesCount').forEach(function(element) {
+            const originalText = element.textContent.trim();
+
+            // 이미 단위가 붙은 경우 건너뛰기 (예: '1.2K')
+            if (/[KMGT]$/.test(originalText)) return;
+
+            const count = parseInt(originalText.replace(/,/g, ''));
+            if (!isNaN(count)) {
+                element.textContent = formatNumber(count);
+            }
+        });
+
+        // 좋아요 수 포맷 처리 (기존에 이미 포맷된 값이면 무시)
+        container.querySelectorAll('.likesCount').forEach(function(element) {
+            const originalText = element.textContent.trim();
+
+            // 이미 단위가 붙은 경우 건너뛰기 (예: '2.5K')
+            if (/[KMGT]$/.test(originalText)) return;
+
+            const count = parseInt(originalText.replace(/,/g, ''));
+            if (!isNaN(count)) {
+                element.textContent = formatNumber(count);
+            }
+        });
+
+        // 누적관객수 포맷 처리
+        document.querySelectorAll(".audience-counting").forEach(function(element) {
+            const originalCount = element.textContent.trim();
+            element.innerHTML = formatAudienceCount(originalCount);
+        });
+
+        // 모든 좋아요 버튼 wrapper 요소들
+        const likeBtnWrappers = document.querySelectorAll('.like-btn[data-movie-id]');
+
+        likeBtnWrappers.forEach(wrapper => {
+            const movieId = wrapper.getAttribute('data-movie-id');
+            const heartButton = wrapper.querySelector('.heart-button');
+            const likesCountSpan = wrapper.querySelector('.likesCount');
+
+            if (!heartButton || !likesCountSpan) {
+                console.warn('좋아요 버튼 또는 좋아요 수 표시 요소를 찾을 수 없습니다.', wrapper);
+                return;
+            }
+
+            function formatNumber(num) {
+                if (num < 1000) {
+                    return num.toString();
+                } else if (num < 1000000) {
+                    return (Math.floor(num / 100) / 10) + 'K';
+                } else if (num < 1000000000) {
+                    return (Math.floor(num / 100000) / 10) + 'M';
+                } else if (num < 1000000000000) {
+                    return (Math.floor(num / 100000000) / 10) + 'G';
+                } else {
+                    return (Math.floor(num / 100000000000) / 10) + 'T';
+                }
+            }
+
+            function parseFormattedNumber(text) {
+                const unitMatch = text.trim().match(/([0-9.]+)([KMGT]?)$/);
+                if (!unitMatch) return 0;
+
+                const value = parseFloat(unitMatch[1]);
+                const unit = unitMatch[2];
+
+                switch (unit) {
+                    case 'K': return value * 1_000;
+                    case 'M': return value * 1_000_000;
+                    case 'G': return value * 1_000_000_000;
+                    case 'T': return value * 1_000_000_000_000;
+                    default: return value;
+                }
+            }
+
+            heartButton.addEventListener('click', function () {
+                fetch(`/api/movies/${movieId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        return response.text().then(errorMessage => {
+                            throw new Error(errorMessage || "좋아요 처리 중 알 수 없는 오류가 발생했습니다.");
+                        });
+                    }
+                })
+                .then(message => {
+                    alert(message);
+
+                    let currentLikes = parseFormattedNumber(likesCountSpan.textContent);
+
+                    if (message.includes("추가되었습니다")) {
+                        currentLikes++;
+                        heartButton.classList.add('active');
+                    } else if (message.includes("취소되었습니다")) {
+                        currentLikes--;
+                        heartButton.classList.remove('active');
+                    }
+                    likesCountSpan.textContent = formatNumber(currentLikes);
+                })
+                .catch(error => {
+                    console.error('좋아요 처리 중 에러:', error);
+                    alert('좋아요 처리 중 에러가 발생했습니다: ' + error.message);
+                });
+            });
+        });
+
+
+  }
+});
     });
 </script>
 
 <script>
+    // 숫자를 K, M, G, T 형식으로 변환하는 함수 (전역으로 정의)
+    function formatNumber(num) {
+        if (num < 1000) {
+            return num.toString();
+        } else if (num < 1000000) {
+            return (Math.floor(num / 100) / 10) + 'K';
+        } else if (num < 1000000000) {
+            return (Math.floor(num / 100000) / 10) + 'M';
+        } else if (num < 1000000000000) {
+            return (Math.floor(num / 100000000) / 10) + 'G';
+        } else {
+            return (Math.floor(num / 100000000000) / 10) + 'T';
+        }
+    }
+
+    // 누적 관객수 포맷 함수
+      function formatAudienceCount(count) {
+        console.log('원본 audienceCount:', count);
+
+        // 이미 단위(예: '만', '명')가 붙은 문자열이면 그대로 리턴
+        if (typeof count === 'string' && /[만명]/.test(count)) {
+            return count;
+        }
+
+        // 쉼표 제거 후 숫자로 변환
+        const n = parseInt(count.replace(/,/g, ''), 10);
+        if (isNaN(n)) return count;
+
+        if (n >= 10000) {
+            return (n / 10000).toFixed(1).replace(/\.0$/, '') + '만명';
+        }
+
+        return n.toLocaleString() + '명';
+    }
+
+    function applyAudienceCountFormat() {
+        document.querySelectorAll(".audience-counting").forEach(function(element) {
+            const original = element.textContent.trim();
+            element.textContent = formatAudienceCount(original);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", applyAudienceCountFormat);
+
+    function convertAgeRating(text) {
+        switch (text.trim().toLowerCase()) {
+            case 'all':
+                return '전체관람가';
+            case '12':
+                return '12세이상관람가';
+            case '15':
+                return '15세이상관람가';
+            case '19':
+                return '청소년관람불가';
+            default:
+                return text;  // 변환할 수 없으면 원래 텍스트 유지
+        }
+    }
+
+    function applyAgeRatingConversion() {
+        document.querySelectorAll('.age').forEach(el => {
+            el.textContent = convertAgeRating(el.textContent);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', applyAgeRatingConversion);
+
     function deleteMovie(movieId) {
         // 사용자에게 삭제 여부 확인
         if (confirm('정말로 이 영화를 삭제하시겠습니까?')) {
@@ -222,9 +541,9 @@
                 method: 'DELETE'
             })
             .then(response => {
-                if (response.ok) { // HTTP 상태 코드가 200-299 범위인 경우 (성공)
+                if (response.ok) {
                     alert('영화를 성공적으로 삭제했습니다.');
-                    window.location.href = '/movies'; // 영화 목록 페이지로 리다이렉트
+                    window.location.href = '/movies';
                 } else {
                     // 오류 응답 처리
                     alert('영화 삭제에 실패했습니다. 다시 시도해주세요.');
@@ -265,19 +584,19 @@
 
         // ISO 형식의 날짜 문자열에서 'T'를 기준으로 분할하여 날짜 부분만 추출
         const datePart = dateString.split('T')[0];
-        return datePart;
-        }
+        return datePart.replaceAll('-', '.');
+    }
 
-        // .format-date 클래스를 가진 모든 요소 찾기
-        const dateElements = document.querySelectorAll('.format-date');
+    // .format-date 클래스를 가진 모든 요소 찾기
+    const dateElements = document.querySelectorAll('.format-date');
 
-        // 각 요소의 텍스트 내용을 변환
-        dateElements.forEach(function(element) {
+    // 각 요소의 텍스트 내용을 변환
+    dateElements.forEach(function(element) {
         const originalDate = element.textContent;
         if (originalDate && originalDate.trim() !== '') {
           element.textContent = formatDate(originalDate);
         }
     });
-</script>
 
+</script>
 {{> common/footer }}

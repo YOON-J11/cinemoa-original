@@ -53,10 +53,6 @@ public class MovieDto {
         return this.screeningStatus != null && this.screeningStatus == Movie.ScreeningStatus.NOT_SHOWING;
     }
 
-    public boolean isAllRating() {
-        return "ALL".equalsIgnoreCase(this.ageRating);
-    }
-
     public boolean isAll() {
         return "ALL".equals(this.ageRating);
     }
@@ -72,6 +68,9 @@ public class MovieDto {
     public boolean is19() {
         return "19".equals(this.ageRating);
     }
+
+    private boolean likedByCurrentUser;
+    private Integer rank; // 예매율 기반 순위
 
 }
 

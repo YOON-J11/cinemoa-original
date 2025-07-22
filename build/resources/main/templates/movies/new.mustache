@@ -1,108 +1,96 @@
-<div class="container">
-    <h1>새 영화 등록</h1>
+{{> common/header }}
+<link rel="stylesheet" href="/css/movies.css" />
+<div class="container movies">
     {{#message}}
         <div class="alert alert-success">{{message}}</div>
     {{/message}}
-    <form action="/movies/new" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="title">제목*</label>
-            <input type="text" id="title" name="title" required>
-        </div>
-        <!-- content textarea 대신 스마트 에디터 적용 -->
-        <div class="form-group">
-            <label for="content">내용</label>
-            <textarea name="content" id="ir1" rows="10" cols="100" style="width:100%; height:400px; display:none;"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="director">감독</label>
-            <input type="text" id="director" name="director">
-        </div>
-        <div class="form-group">
-            <label for="actors">배우</label>
-            <input type="text" id="actors" name="actors" placeholder="배우 이름을 쉼표로 구분하여 입력하세요">
-        </div>
-        <div class="form-group">
-            <label for="genre">장르</label>
-            <input type="text" id="genre" name="genre">
-        </div>
-        <div class="form-group">
-            <label for="releaseDate">개봉일</label>
-            <input type="date" id="releaseDate" name="releaseDate">
-        </div>
-        <!-- 상영 상태 필드 추가 -->
-        <div class="form-group">
-            <label for="screeningStatus">상영 상태</label>
-            <select id="screeningStatus" name="screeningStatus" class="form-control">
-                <option value="NOW_SHOWING">개봉중</option>
-                <option value="COMING_SOON">상영예정</option>
-                <option value="NOT_SHOWING" selected>상영안함</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="rating">평점</label>
-            <input type="number" id="rating" name="rating" step="0.1" min="0" max="10">
-        </div>
-        <div class="form-group">
-            <label for="reservationRate">예매율</label>
-            <input type="number" id="reservationRate" name="reservationRate" step="0.1" min="0" max="100">
-        </div>
+    <div class="movie-edit">
+        <form action="/movies/new" method="post" enctype="multipart/form-data">
+            <div class="button-group admin-btn">
+                <button type="submit" class="btn btn-primary">등록</button>
+                <a href="/movies" class="btn btn-secondary">취소</a>
+            </div>
 
-        <div class="form-group">
-            <label for="ageRating">관람등급</label>
-            <select id="ageRating" name="ageRating" class="form-control">
-                <option value="ALL">전체관람가</option>
-                <option value="12">12세 이상</option>
-                <option value="15">15세 이상</option>
-                <option value="19">19세 이상</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="runningTime">러닝타임 (분)</label>
-            <input type="number" id="runningTime" name="runningTime" min="0" value="0">
-        </div>
+            <div class="movie-info-wrap pb-30">
+                <div class="poster">
+                    <div class="image-preview-container">
+                        <p id="noImageText">영화의 포스터 이미지를 선택하세요.</p>
+                        <div class="poster-input">
+                            <input type="file" id="mainImageFile" name="mainImageFile" accept="image/*">
+                        </div>
+                    </div>
+                </div>
 
-        <!-- 이미지 업로드 필드 분리 -->
-        <div class="form-group">
-            <label for="mainImageFile">메인 포스터 이미지</label>
-            <input type="file" id="mainImageFile" name="mainImageFile" accept="image/*">
-            <small class="form-text text-muted">영화의 메인 포스터 이미지를 선택하세요.</small>
-        </div>
-        <div class="form-group">
-            <label for="subImageFile">서브 이미지</label>
-            <input type="file" id="subImageFile" name="subImageFile" accept="image/*">
-            <small class="form-text text-muted">메인 포스터 외의 추가 이미지를 선택하세요.</small>
-        </div>
-        <div class="form-group">
-            <label for="detailImageFiles">상세 스틸컷 이미지 (여러 개 선택 가능)</label>
-            <input type="file" id="detailImageFiles" name="detailImageFiles" multiple accept="image/*">
-            <small class="form-text text-muted">영화의 상세 스틸컷 이미지를 선택하세요.</small>
-        </div>
+                <div class="movie-info">
+                    <div class="form-group">
+                        <label for="title">제목</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="director">감독</label>
+                        <input type="text" id="director" name="director">
+                    </div>
+                    <div class="form-group">
+                        <label for="actors">배우</label>
+                        <input type="text" id="actors" name="actors" placeholder="배우 이름을 쉼표로 구분하여 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="genre">장르</label>
+                        <input type="text" id="genre" name="genre">
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseDate">개봉일</label>
+                        <input type="date" id="releaseDate" name="releaseDate">
+                    </div>
+                    <!-- 상영 상태 필드 추가 -->
+                    <div class="form-group">
+                        <label for="screeningStatus">상영 상태</label>
+                        <select id="screeningStatus" name="screeningStatus" class="form-control">
+                            <option value="NOW_SHOWING">개봉중</option>
+                            <option value="COMING_SOON">상영예정</option>
+                            <option value="NOT_SHOWING" selected>상영안함</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="videoUrl">동영상 URL</label>
-            <input type="text" id="videoUrl" name="videoUrl">
-        </div>
-        <div class="form-group">
-            <label for="audienceCount">관객수</label>
-            <input type="number" id="audienceCount" name="audienceCount" min="0">
-        </div>
-        <div class="form-group">
-            <label for="likesCount">좋아요 수</label>
-            <input type="number" id="likesCount" name="likesCount" min="0" value="0">
-        </div>
-        <div class="form-group">
-            <label for="reviewCount">리뷰 수</label>
-            <input type="number" id="reviewCount" name="reviewCount" min="0" value="0">
-        </div>
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">등록하기</button>
-            <a href="/movies" class="btn btn-secondary">취소</a>
-        </div>
-    </form>
+                    <div class="form-group">
+                        <label for="ageRating">관람등급</label>
+                        <select id="ageRating" name="ageRating" class="form-control">
+                            <option value="ALL">전체관람가</option>
+                            <option value="12">12세 이상</option>
+                            <option value="15">15세 이상</option>
+                            <option value="19">19세 이상</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="runningTime">러닝타임 (분)</label>
+                        <input type="number" id="runningTime" name="runningTime" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="videoUrl">예고편 URL</label>
+                        <input type="text" id="videoUrl" name="videoUrl">
+                    </div>
+                </div>
+            </div>
+
+            <!-- content textarea 대신 스마트 에디터 적용 -->
+            <div class="form-group">
+                <textarea name="content" id="ir1" rows="10" cols="100" style="width:100%; height:400px; display:none;"></textarea>
+            </div>
+
+            <div class="form-group pt-30">
+                <label for="detailImageFiles">스틸컷 업로드</label>
+                <input type="file" id="detailImageFiles" name="detailImageFiles" multiple accept="image/*">
+            </div>
+
+<!--            <div class="form-group">-->
+<!--                <label for="audienceCount">관객수</label>-->
+<!--                <input type="number" id="audienceCount" name="audienceCount" min="0">-->
+<!--            </div>-->
+        </form>
+    </div>
 </div>
 
 <!-- 스마트 에디터 스크립트 -->
-<!-- 이 스크립트는 폼 태그가 끝나는 </body> 태그 바로 위에 위치하는 것이 좋습니다. -->
 <script type="text/javascript" src="/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript">
     var oEditors = [];
@@ -155,3 +143,4 @@
         };
     });
 </script>
+{{> common/footer }}
