@@ -5,6 +5,10 @@ import com.cinemoa.entity.Inquiry;
 import com.cinemoa.entity.Member;
 import com.cinemoa.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -55,6 +59,19 @@ public class InquiryService {
                         .replyDate(inquiry.getReplyDate() != null ? inquiry.getReplyDate().format(formatter) : null)
                         .build())
                 .collect(Collectors.toList());
+    }
+
+
+    public Page<InquiryDto> getMyInquiries(String memberId, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("regDate").descending());
+        Page<Inquiry> inquiries = inquiryRepository.findByMember_MemberId(memberId, pageable);
+        return inquiries.map(InquiryDto::fromEntity);
+    }
+
+    public Page<InquiryDto> getMyInquiriesForGuest(Long guestUserId, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("regDate").descending());
+        Page<Inquiry> inquiries = inquiryRepository.findByGuestUser_GuestUserId(guestUserId, pageable);
+        return inquiries.map(InquiryDto::fromEntity);
     }
 
 

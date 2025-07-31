@@ -175,29 +175,48 @@ public class SupportController {
 
 
     @GetMapping("/myinquiry")
-    public String myinquiry(Model model, HttpSession session, @RequestParam(defaultValue = "1") int page) {
+    public String myinquiry(Model model, HttpSession session,
+                            @RequestParam(defaultValue = "0") int page) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         GuestUser guestUser = (GuestUser) session.getAttribute("guestUser");
 
-        // 로그인 사용자 또는 비회원이 아니면 접근 불가
         if (loginMember == null && guestUser == null) {
             return "redirect:/member/login";
         }
 
+        Page<InquiryDto> inquiryPage = null;
+
         if (loginMember != null) {
-            List<InquiryDto> myInquiries = inquiryService.getMyInquiries(loginMember.getMemberId());
-            model.addAttribute("myInquiries", myInquiries);
-        } else if (guestUser != null) {
-            List<InquiryDto> myInquiries = inquiryService.getMyInquiriesForGuest(guestUser.getGuestUserId());
-            model.addAttribute("myInquiries", myInquiries);
+            inquiryPage = inquiryService.getMyInquiries(loginMember.getMemberId(), page);
+        } else {
+            inquiryPage = inquiryService.getMyInquiriesForGuest(guestUser.getGuestUserId(), page);
         }
+
+        int totalPages = inquiryPage.getTotalPages();
+        List<Map<String, Object>> pageNumbers = IntStream.range(0, totalPages)
+                .mapToObj(i -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("num", i); // 내부 링크용 (0부터 시작)
+                    map.put("displayNum", i + 1); // 사용자에게 보일 숫자 (1부터 시작)
+                    map.put("isCurrent", i == page);
+                    return map;
+                }).toList();
+
+
+
+        model.addAttribute("inquiryPage", inquiryPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("prevPage", page > 0 ? page - 1 : 0);
+        model.addAttribute("nextPage", page + 1);
 
         model.addAttribute("myinquiry", true);
         model.addAttribute("pagePath", "고객센터 > 나의 문의 내역");
         addLoginMember(model, session);
         return "support/supportLayout";
     }
+
 
     @GetMapping("/inquiry/{id}")
     public String inquiryDetail(@PathVariable Long id, Model model, HttpSession session) {

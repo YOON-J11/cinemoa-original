@@ -3,45 +3,53 @@
 <div class="list-container">
     <div class="title-area">
         <h2 class="section-title">나의 문의 내역</h2>
-        <a href="/support/inquiryForm">문의하기</a>
     </div>
     <table class="list-table">
         <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>등록일</th>
-                <th>답변 상태</th>
-            </tr>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>등록일</th>
+            <th>답변 상태</th>
+        </tr>
         </thead>
+
         <tbody>
-            {{^myInquiries}}
+        {{^inquiryPage.content}}
             <tr>
                 <td class="no-list" colspan="4">등록된 문의 내역이 없습니다.</td>
             </tr>
-            {{/myInquiries}}
+        {{/inquiryPage.content}}
 
-            {{#myInquiries}}
+        {{#inquiryPage.content}}
             <tr class="tr-style">
                 <td>{{inquiryId}}</td>
-                <td>
-                    <a href="#" class="list-link">{{title}}</a>
-                </td>
+                <td><a href="#" class="list-link">{{title}}</a></td>
                 <td>{{regDate}}</td>
                 <td>
                     {{#replyContent}}<span class="answered">답변 완료</span>{{/replyContent}}
                     {{^replyContent}}<span class="waiting">답변 대기</span>{{/replyContent}}
                 </td>
             </tr>
-            {{/myInquiries}}
+        {{/inquiryPage.content}}
+
         </tbody>
+
 
     </table>
     <div class="pagination">
-        <a href="#" class="page prev">«</a>
-        <a href="#" class="page active">1</a>
-        <a href="#" class="page">2</a>
-        <a href="#" class="page">3</a>
-        <a href="#" class="page next">»</a>
+        {{#inquiryPage.hasPrevious}}
+            <a href="?page={{prevPage}}" class="page prev">«</a>
+        {{/inquiryPage.hasPrevious}}
+
+        {{#pageNumbers}}
+            <a href="?page={{num}}" class="page {{#isCurrent}}active{{/isCurrent}}">{{displayNum}}</a>
+        {{/pageNumbers}}
+
+        {{#inquiryPage.hasNext}}
+            <a href="?page={{nextPage}}" class="page next">»</a>
+        {{/inquiryPage.hasNext}}
     </div>
+
+
 </div>
