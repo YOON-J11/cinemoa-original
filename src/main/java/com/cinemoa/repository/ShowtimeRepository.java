@@ -43,15 +43,14 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
     @Modifying
     @Query(value =
             "INSERT INTO showtimes ( " +
-                    "  movie_id, screen_id, start_time, end_time, created_at, updated_at, available_seats, price " +
+                    "  movie_id, screen_id, start_time, end_time, created_at, updated_at, available_seats " +  // ✅ price 제거
                     ") " +
                     "SELECT s.movie_id, " +
                     "       s.screen_id, " +
                     "       s.start_time + INTERVAL k WEEK, " +
                     "       s.end_time   + INTERVAL k WEEK, " +
                     "       NOW(), NOW(), " +
-                    "       s.available_seats, " +
-                    "       s.price " +
+                    "       s.available_seats " +                                                               // ✅ price 참조 제거
                     "FROM showtimes s " +
                     "JOIN (SELECT 0 AS k UNION ALL SELECT 1 UNION ALL SELECT 2) ks " +
                     "WHERE s.start_time >= CURDATE() - INTERVAL 21 DAY " +
