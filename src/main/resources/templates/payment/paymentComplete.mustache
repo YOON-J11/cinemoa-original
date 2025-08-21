@@ -1,0 +1,20 @@
+﻿{{> common/header }}
+<link rel="stylesheet" href="/css/payment/paymentComplete.css?v={{ timestamp }}" />
+<div class="container complete-container">
+    <h2>결제가 완료되었습니다 🎉</h2>
+    <div class="card">
+        <p><strong>예약번호</strong> : {{reservation.reservationId}}</p>
+        <p><strong>영화</strong> : {{movie.title}}</p>
+        <p><strong>극장</strong> : {{cinema.name}}</p>
+        <p><strong>상영관</strong> : {{screen.screenName}}</p>
+        <p><strong>일시</strong> : {{showtime.startTime}} ~ {{showtime.endTime}}</p>
+        <p><strong>좌석</strong> : {{seatInfo}}</p>
+        <p><strong>결제수단</strong> : {{reservation.paymentMethod}}</p>
+        <p><strong>상태</strong> : {{reservation.status}}</p>
+    </div>
+    <div class="actions">
+        <a class="btn btn-primary" href="/mypage/reservations">예매내역 보기</a>
+        <a class="btn" href="/">홈으로</a>
+    </div>
+</div>
+{{> common/footer }}

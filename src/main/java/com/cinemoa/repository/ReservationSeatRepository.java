@@ -13,4 +13,6 @@ public interface ReservationSeatRepository extends JpaRepository<ReservationSeat
 
     //특정 예매(reservationId)에 해당하는 좌석(ReservationSeat) 목록을 조회
     List<ReservationSeat> findByReservation_ReservationId(Long reservationId);
+
+    boolean existsByShowtime_ShowtimeIdAndSeat_SeatId(Long showtimeId, Long seatId);
 }

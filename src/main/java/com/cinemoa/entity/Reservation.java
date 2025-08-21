@@ -15,37 +15,37 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reservationId; // 예매 고유번호
+    private Long reservationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member; // 예매한 회원
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
-    private Movie movie; // 영화
+    private Movie movie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id")
-    private Cinema cinema; // 영화관
+    private Cinema cinema;
 
-    @Column(name = "screen_id")
-    private Integer screenId;
+    @Column(name = "screen_id", nullable = false)
+    private Long screenId;                    // ★ Integer -> Long
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", insertable = false, updatable = false)
-    private Screen screen;
+    private Screen screen;                    // FK 객체 접근용 (그대로)
 
-    private String seatInfo; // 예매 좌석 정보 (예: A5,A6)
+    private String seatInfo;
 
-    private LocalDateTime reservationTime; // 예매 시간
+    private LocalDateTime reservationTime;
 
     @OneToOne(mappedBy = "reservation", fetch = FetchType.LAZY)
     private Payment payment;
 
-    private String paymentMethod; // 결제 수단 (계좌이체 / 신용카드)
+    private String paymentMethod;
 
-    private String status; // 예매 상태 (예약완료 / 취소됨)
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "showtime_id", nullable = false)

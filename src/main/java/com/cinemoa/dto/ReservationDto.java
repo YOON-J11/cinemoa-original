@@ -25,7 +25,7 @@ public class ReservationDto {
     private String memberId; // 회원 ID
     private Long movieId; // 영화 ID
     private Long cinemaId; // 영화관 ID
-    private Integer screenId; // 상영관 ID
+    private Long screenId; // 상영관 ID
     private String seatInfo; // 좌석 정보 (예: A5,A6)
     private LocalDateTime reservationTime; // 예매 시간
     private String paymentMethod; // 결제 수단

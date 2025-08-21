@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,8 +30,6 @@ public class PaymentController {
     private final ShowtimeRepository showtimeRepository;
     private final SeatRepository seatRepository;
 
-
-
     @GetMapping("/payment")
     public String showPaymentPage(
             @RequestParam int amount,
@@ -43,11 +41,32 @@ public class PaymentController {
             Model model,
             HttpSession session
     ) {
-        // 로그인 여부 또는 세션 값 확인 (필요시 활용)
+        // (선택) 로그인 세션 확인만 사용
         Object loginMember = session.getAttribute("loginMember");
         Object guestUser = session.getAttribute("guestUser");
 
-        // 모델에 결제 관련 정보 전달
+        // ★ 로그인 사용자 이메일/이름 모델에 내려주기 (없으면 null)
+        String buyerEmail = null;
+        String buyerName = null;
+        if (loginMember instanceof Member m) {
+            buyerEmail = m.getEmail();
+            buyerName = m.getName();
+        }
+        model.addAttribute("buyerEmail", buyerEmail);
+        model.addAttribute("buyerName", buyerName);
+
+        // showtime으로 상세 정보 조회해서 결제 페이지에도 표시
+        Showtime showtime = showtimeRepository.findById(showtimeId).orElseThrow(() -> new IllegalArgumentException("Invalid showtimeId: " + showtimeId));
+
+
+        Movie movie = showtime.getMovie();
+        Screen screen = showtime.getScreen();
+        Cinema cinema = screen.getCinema();
+
+        DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy.MM.dd (E)", Locale.KOREAN);
+        DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+
+
         model.addAttribute("amount", amount);
         model.addAttribute("movieId", movieId);
         model.addAttribute("showtimeId", showtimeId);
@@ -55,63 +74,105 @@ public class PaymentController {
         model.addAttribute("seatInfo", seatInfo);
         model.addAttribute("seatIdList", seatIdList);
 
+        // ★ 결제 페이지 표시용 상세 데이터
+        model.addAttribute("movie", movie);
+        model.addAttribute("screen", screen);
+        model.addAttribute("cinema", cinema);
+        model.addAttribute("formattedDate", showtime.getStartTime().format(dateFmt));
+        model.addAttribute("formattedStartTime", showtime.getStartTime().format(timeFmt));
+        model.addAttribute("formattedEndTime", showtime.getEndTime().format(timeFmt));
+        model.addAttribute("isMorning", showtime.getStartTime().getHour() < 10);
+        model.addAttribute("screenType", screen.getScreenType());
+        model.addAttribute("isStandard", "STANDARD".equals(screen.getScreenType()));
+        model.addAttribute("ageImagePath", "/images/movie/" + movie.getAgeRating() + "_46x46.png");
+
+
         return "payment/payment";
     }
-
 
     @PostMapping("/payment/complete")
     @ResponseBody
     @Transactional
     public ResponseEntity<String> completePayment(@RequestBody Map<String, Object> payload, HttpSession session) {
         try {
-            // 1. 전달받은 값 꺼내기
+            // 1) 전달 값
             String impUid = (String) payload.get("impUid");
             int paidAmount = ((Number) payload.get("paidAmount")).intValue();
             String method = (String) payload.get("method");
             Long movieId = Long.valueOf(payload.get("movieId").toString());
             Long showtimeId = Long.valueOf(payload.get("showtimeId").toString());
-            Integer screenId = Integer.valueOf(payload.get("screenId").toString());
+            Long screenId = Long.valueOf(payload.get("screenId").toString());
             String seatInfo = (String) payload.get("seatInfo");
-            List<Integer> seatIds = (List<Integer>) payload.get("seatIdList");
 
+            @SuppressWarnings("unchecked")
+            List<Object> rawSeatIds = (List<Object>) payload.get("seatIdList");
+            List<Long> seatIds = rawSeatIds.stream().map(v -> Long.valueOf(v.toString())).collect(Collectors.toList());
 
-            // 2. 아임포트 결제 검증
-            String impKey = "7713737840810560";
-            String impSecret = "dMiYlmpKva4VtalV4HkOLqNK3P8KHshJ3ughJ9avTl8dS4qyn8KDTsRMxERIDrd4QaowezrtzsYHOfmw";
+            // 2) 아임포트 토큰 발급 (form-urlencoded)
+            String impKey = "7713737840810560";   // TODO: 본인 계정 키로 교체
+            String impSecret = "dMiYlmpKva4VtalV4HkOLqNK3P8KHshJ3ughJ9avTl8dS4qyn8KDTsRMxERIDrd4QaowezrtzsYHOfmw"; // TODO: 본인 시크릿
 
             RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Map<String, String> tokenRequest = new HashMap<>();
-            tokenRequest.put("imp_key", impKey);
-            tokenRequest.put("imp_secret", impSecret);
+            HttpHeaders tokenHeaders = new HttpHeaders();
+            tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            HttpEntity<Map<String, String>> tokenEntity = new HttpEntity<>(tokenRequest, headers);
-            ResponseEntity<JsonNode> tokenResponse = restTemplate.postForEntity(
-                    "https://api.iamport.kr/users/getToken", tokenEntity, JsonNode.class);
-            String accessToken = tokenResponse.getBody().get("response").get("access_token").asText();
+            org.springframework.util.MultiValueMap<String, String> tokenForm =
+                    new org.springframework.util.LinkedMultiValueMap<>();
+            tokenForm.add("imp_key", impKey);
+            tokenForm.add("imp_secret", impSecret);
 
-            // 결제 조회
-            headers.set("Authorization", accessToken);
-            HttpEntity<?> payInfoEntity = new HttpEntity<>(headers);
-            ResponseEntity<JsonNode> paymentResponse = restTemplate.exchange(
+            HttpEntity<org.springframework.util.MultiValueMap<String, String>> tokenHttpEntity =
+                    new HttpEntity<>(tokenForm, tokenHeaders);
+
+            ResponseEntity<JsonNode> tokenResp = restTemplate.postForEntity(
+                    "https://api.iamport.kr/users/getToken",
+                    tokenHttpEntity,
+                    JsonNode.class
+            );
+
+            if (!tokenResp.getStatusCode().is2xxSuccessful()
+                    || tokenResp.getBody() == null
+                    || tokenResp.getBody().get("response") == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰 발급 실패");
+            }
+
+            String accessToken = tokenResp.getBody().get("response").get("access_token").asText();
+
+            // 3) 결제 조회 (Authorization 헤더만 사용)
+            HttpHeaders payHeaders = new HttpHeaders();
+            payHeaders.set("Authorization", accessToken);
+            HttpEntity<Void> payInfoEntity = new HttpEntity<>(payHeaders);
+
+            ResponseEntity<JsonNode> payResp = restTemplate.exchange(
                     "https://api.iamport.kr/payments/" + impUid,
                     HttpMethod.GET,
                     payInfoEntity,
                     JsonNode.class
             );
-            int amountFromServer = paymentResponse.getBody().get("response").get("amount").asInt();
 
+            int amountFromServer = payResp.getBody().get("response").get("amount").asInt();
             if (amountFromServer != paidAmount) {
                 return ResponseEntity.badRequest().body("결제 금액 불일치");
             }
 
+            // 4) 도메인 검증
             Showtime showtime = showtimeRepository.findById(showtimeId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid showtimeId: " + showtimeId));
             Cinema cinema = showtime.getScreen().getCinema();
 
-            // 3. 예약 정보 저장
+            for (Long seatId : seatIds) {
+                if (reservationSeatRepository.existsByShowtime_ShowtimeIdAndSeat_SeatId(showtimeId, seatId)) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 예약된 좌석이 포함되어 있습니다.");
+                }
+                Seat seat = seatRepository.findById(seatId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid seatId: " + seatId));
+                if (!Objects.equals(seat.getScreen().getScreenId(), showtime.getScreen().getScreenId())) {
+                    return ResponseEntity.badRequest().body("좌석이 상영관과 일치하지 않습니다. seatId=" + seatId);
+                }
+            }
+
+            // 5) 예약 저장
             Reservation reservation = new Reservation();
             reservation.setReservationTime(LocalDateTime.now());
             reservation.setSeatInfo(seatInfo);
@@ -119,40 +180,66 @@ public class PaymentController {
             reservation.setPaymentMethod(method);
             reservation.setCinema(cinema);
             reservation.setMovie(movieRepository.findById(movieId).orElse(null));
-            reservation.setShowtime(showtimeRepository.findById(showtimeId).orElse(null));
+            reservation.setShowtime(showtime);
             reservation.setScreenId(screenId);
 
             Object loginMember = session.getAttribute("loginMember");
             if (loginMember instanceof Member) {
                 reservation.setMember((Member) loginMember);
             }
-
             reservationRepository.save(reservation);
 
-            // 4. 좌석 정보 저장
-            for (Integer seatId : seatIds) {
-                ReservationSeat reservationSeat = new ReservationSeat();
-                reservationSeat.setReservation(reservation);
-                reservationSeat.setSeat(seatRepository.findById(Long.valueOf(seatId)).orElse(null));
-                reservationSeat.setShowtime(showtime);
-                reservationSeatRepository.save(reservationSeat);
+            // 6) 좌석 저장
+            for (Long seatId : seatIds) {
+                ReservationSeat rs = new ReservationSeat();
+                rs.setReservation(reservation);
+                rs.setSeat(seatRepository.findById(seatId).orElse(null));
+                rs.setShowtime(showtime);
+                reservationSeatRepository.save(rs);
             }
 
-            // 5. 결제 정보 저장
+            // 7) 결제 저장
             Payment payment = new Payment();
             payment.setReservation(reservation);
             payment.setAmount(paidAmount);
             payment.setMethod(method);
             payment.setStatus(Payment.PaymentStatus.PAID);
             payment.setTransactionId(impUid);
+            payment.setPaidAt(LocalDateTime.now());
             paymentRepository.save(payment);
 
-            return ResponseEntity.ok("결제 성공 및 DB 저장 완료");
+            // 8) OK 응답
+            return ResponseEntity.ok("OK:" + reservation.getReservationId());
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/complete")
+    public String reservationComplete(@RequestParam Long reservationId, Model model) {
+        Reservation r = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다: " + reservationId));
+
+        // 지연로딩 주의: 화면에서 필요한 것들 미리 꺼내두기
+        Showtime showtime = r.getShowtime();
+        Movie movie = r.getMovie();
+        Cinema cinema = r.getCinema();
+        Screen screen = showtime.getScreen();
+
+        // 좌석 상세가 필요하면 reservation_seats 조회
+        List<ReservationSeat> seats = reservationSeatRepository.findByReservation_ReservationId(reservationId);
+
+        model.addAttribute("reservation", r);
+        model.addAttribute("movie", movie);
+        model.addAttribute("cinema", cinema);
+        model.addAttribute("screen", screen);
+        model.addAttribute("showtime", showtime);
+        model.addAttribute("seatInfo", r.getSeatInfo());
+        model.addAttribute("reservationSeats", seats);
+
+        return "payment/paymentComplete";
     }
 
 }

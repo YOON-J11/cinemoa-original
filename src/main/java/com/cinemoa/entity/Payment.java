@@ -36,4 +36,11 @@ public class Payment {
     public enum PaymentStatus {
         PAID, CANCELLED, FAILED
     }
+
+    @PrePersist
+    void onCreate() {
+        if (this.paidAt == null && this.status == PaymentStatus.PAID) {
+            this.paidAt = LocalDateTime.now();
+        }
+    }
 }
