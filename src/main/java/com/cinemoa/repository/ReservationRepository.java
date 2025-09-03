@@ -38,7 +38,24 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.movie.movieId = :movieId AND r.payment.status = :status")
     long countReservationsByMovieId(@Param("movieId") Long movieId, @Param("status") Payment.PaymentStatus status);
 
-
     @Query("SELECT COUNT(r) FROM Reservation r")
     long countAll();
+
+    @Query("""
+       SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
+       FROM Reservation r
+       JOIN r.screen s
+       JOIN r.movie m
+       JOIN r.member mem
+       JOIN r.showtime st
+       WHERE mem.memberId = :memberId
+         AND m.movieId   = :movieId
+         AND r.status = '예약완료'
+         AND st.startTime <= CURRENT_TIMESTAMP
+       """)
+    boolean hasWatchedOrCompletedReservation(@Param("memberId") String memberId,
+                                             @Param("movieId") Long movieId);
+
+
+
 }

@@ -5,10 +5,12 @@ import com.cinemoa.dto.ReviewDto;
 import com.cinemoa.entity.Member;
 import com.cinemoa.entity.Movie;
 import com.cinemoa.service.MovieService;
+import com.cinemoa.service.ReviewEligibilityService;
 import com.cinemoa.service.ReviewService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,11 +42,13 @@ public class MovieController {
 
     private final MovieService movieService;
     private final ReviewService reviewService;
+    private final ReviewEligibilityService reviewEligibilityService;
 
     @Autowired
-    public MovieController(MovieService movieService, ReviewService reviewService) {
+    public MovieController(MovieService movieService, ReviewService reviewService, ReviewEligibilityService reviewEligibilityService) {
         this.movieService = movieService;
         this.reviewService = reviewService;
+        this.reviewEligibilityService = reviewEligibilityService;
     }
 
     @GetMapping("")
@@ -224,6 +228,10 @@ public class MovieController {
             int positivePercentage = reviewService.getPositivePercentage(id);
             model.addAttribute("positivePercentage", positivePercentage);
 
+            boolean canWriteReview = currentUserId != null
+                    && reviewEligibilityService.canWriteReview(currentUserId, id);
+            model.addAttribute("canWriteReview", canWriteReview);
+
             // movieId 값을 모델에 추가
             model.addAttribute("movieId", id);
 
@@ -244,6 +252,7 @@ public class MovieController {
             movieDto.setRank(rank);
 
             model.addAttribute("movie", movieDto);
+            model.addAttribute("loginMember", loginMember);
 
             return "movies/view";
         } else {
