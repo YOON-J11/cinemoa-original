@@ -124,9 +124,7 @@ header {
 #main-nav.fixed > ul > li > a {
   color: #fff;
 }
-#main-nav.fixed > ul > li > a:hover {
-  color: #ffb428;
-}
+
 #main-nav.fixed .submenu {
   border-top: none;
 }
