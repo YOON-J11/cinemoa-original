@@ -1,12 +1,7 @@
 <link rel="stylesheet" href="/css/mypage/mypageHome.css?v={{ timestamp }}" />
 <div class="mypage-home-card">
     <div class="card-top">
-        {{#profileImg}}
-            <img src="/images/profile/{{profileImg}}" alt="프로필 이미지">
-        {{/profileImg}}
-        {{^profileImg}}
-            <img src="/images/profile/default-profile.png" alt="기본 이미지">
-        {{/profileImg}}
+        <img src="{{profileImageUrl}}" alt="프로필 이미지">
         <div class="profile-info">
             <h1>안녕하세요! <span>{{name}}</span>님!</h1>
             <P>아이디 : <span>{{memberId}}</span></P>

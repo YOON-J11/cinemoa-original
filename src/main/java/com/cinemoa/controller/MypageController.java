@@ -19,9 +19,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.azure.storage.blob.*;
+import com.azure.storage.blob.models.BlobHttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +37,26 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor //생성자 자동 생성
 @RequestMapping("/mypage")
 public class MypageController {
+
+    @Value("${AZURE_STORAGE_CONNECTION_STRING}")
+    private String blobConn;
+    @Value("${AZURE_BLOB_CONTAINER}")
+    private String blobContainer;
+    @Value("${APP_PROFILE_DEFAULT_URL:/images/profile/default-profile.png}")
+    private String defaultProfileUrl;
+    private String toDisplayUrl(String profileImg) {
+        if (profileImg == null || profileImg.isBlank()) return defaultProfileUrl;
+
+        if (profileImg.startsWith("http://") || profileImg.startsWith("https://")) {
+            // 슬래시만 복원 (다른 인코딩은 그대로 두는 게 안전)
+            return profileImg.replace("%2F", "/").replace("%2f", "/");
+        }
+        // 과거 로컬 파일명 호환
+        return "/images/profile/" + profileImg;
+    }
+
+
+
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
@@ -55,7 +80,7 @@ public class MypageController {
         model.addAttribute("name", loginMember.getName());
         model.addAttribute("memberId", loginMember.getMemberId());
         model.addAttribute("nickname", loginMember.getNickname());
-        model.addAttribute("profileImg", loginMember.getProfileImg());
+        model.addAttribute("profileImageUrl", toDisplayUrl(loginMember.getProfileImg()));
 
         // 2. 선호관람정보
         String preferredCinemaId = loginMember.getPreferredCinema();
@@ -102,9 +127,12 @@ public class MypageController {
     @GetMapping("/profileEditPopup")
     public String showProfileEditPopup(Model model, HttpSession session) {
         Member member = (Member) session.getAttribute("loginMember");
+        if (member == null) return "redirect:/login";
+
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("profileImg", member.getProfileImg());
-        return "mypage/profileEditPopup"; // /templates/mypage/profileEditPopup.mustache
+        // ▼ 머스태치에서 {{profileImageUrl}}를 쓰므로 무조건 표시 가능한 URL로 변환해서 내려줌
+        model.addAttribute("profileImageUrl", toDisplayUrl(member.getProfileImg()));
+        return "mypage/profileEditPopup";
     }
 
     //프로필 수정
@@ -116,33 +144,38 @@ public class MypageController {
         member.setNickname(nickname);
 
         // 프로필 이미지 처리
+        // 프로필 이미지 처리
         if (profileImg != null && !profileImg.isEmpty()) {
-
-            // 실제 서버에 이미지를 저장할 디렉토리 경로 설정
-            String saveDir = "C:/cinemoa-profile/";
-
-            // 업로드된 파일 이름 앞에 UUID를 붙여서 중복 방지
-            String fileName = UUID.randomUUID() + "_" + profileImg.getOriginalFilename();
-
             try {
-                // 저장할 디렉토리가 존재하지 않으면 생성
-                File dir = new File(saveDir);
-                if (!dir.exists()) dir.mkdirs();
-                // 최종 저장 경로 (디렉토리 + 파일명)
-                File dest = new File(saveDir + fileName);
-                // 업로드된 파일을 해당 위치에 저장
-                profileImg.transferTo(dest);
-                // 저장된 파일명을 DB에 저장 (member 테이블의 profile_img 컬럼)
-                member.setProfileImg(fileName);
+                // 1) 컨테이너 클라이언트 만들기
+                BlobContainerClient container = new BlobContainerClientBuilder()
+                        .connectionString(blobConn)
+                        .containerName(blobContainer)
+                        .buildClient();
+                if (!container.exists()) container.create();
+
+                // 2) 가상 폴더 + 중복방지 파일명
+                String safe = (profileImg.getOriginalFilename() == null ? "image" : profileImg.getOriginalFilename())
+                        .replaceAll("\\s+", "_");
+                String key = "profiles/" + UUID.randomUUID() + "-" + safe;
+
+                // 3) 업로드
+                BlobClient blob = container.getBlobClient(key);
+                blob.upload(profileImg.getInputStream(), profileImg.getSize(), true);
+                blob.setHttpHeaders(new BlobHttpHeaders().setContentType(profileImg.getContentType()));
+
+                // 4) DB에는 "직접 조립한" 절대 URL 저장 (슬래시 %2F 문제 없음)
+                String publicUrl = "https://" + getAccountName() + ".blob.core.windows.net/"
+                        + blobContainer + "/" + key;
+                member.setProfileImg(publicUrl);
+
             } catch (IOException e) {
-                // 파일 저장 중 에러 발생 시 로그 출력
                 e.printStackTrace();
             }
         } else {
-            // 사용자가 이미지 파일을 업로드하지 않았거나 기본 이미지 버튼을 눌렀을 경우
-            // 기존 이미지 대신 기본 이미지를 사용하기 위해 DB의 profile_img 컬럼을 null 처리
-            member.setProfileImg(null); // 또는 "" 처리도 가능
+            member.setProfileImg(null);
         }
+
         // 저장
         memberRepository.save(member);
         // 세션 정보 업데이트
@@ -150,9 +183,11 @@ public class MypageController {
 
         // 모델에 nickname, profileImg 전달 (Mustache 에러 방지)
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("profileImg", member.getProfileImg());
+        model.addAttribute("profileImageUrl", toDisplayUrl(member.getProfileImg()));
 
         return "mypage/profileEditPopup";
+
+
     }
 
     //예매내역
@@ -551,6 +586,16 @@ public class MypageController {
         return "mypage/mypageLayout";
     }
 
+    // Azure Storage 연결문자열에서 AccountName 추출
+    private String getAccountName() {
+        if (blobConn == null) return "";
+        for (String part : blobConn.split(";")) {
+            if (part.startsWith("AccountName=")) {
+                return part.substring("AccountName=".length());
+            }
+        }
+        return "";
+    }
 
 
 }

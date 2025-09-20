@@ -22,12 +22,7 @@
         <div class="form-row profile-section">
             <div class="profile-label">프로필 사진</div>
             <div class="profile-content">
-                {{#profileImg}}
-                    <img src="/images/profile/{{profileImg}}" alt="프로필 이미지" class="profile-preview">
-                {{/profileImg}}
-                {{^profileImg}}
-                    <img src="/images/profile/default-profile.png" alt="기본 이미지" class="profile-preview">
-                {{/profileImg}}
+                <img src="{{profileImageUrl}}" alt="프로필 이미지" class="profile-preview">
                 <div class="profile-buttons">
                     <label for="profileImg" class="btn">사진변경</label>
                     <input type="file" id="profileImg" name="profileImg" accept="image/*" hidden>
