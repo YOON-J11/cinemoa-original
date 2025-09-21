@@ -18,9 +18,24 @@ public class WebConfig implements WebMvcConfigurer {
                         "/mypage/withdrawalSuccess",  // 탈퇴 성공 페이지는 예외
                         "/ticketing/**" // 비로그인 유저도 좌석선택까지는 가능
                         );
-    }    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/profile/**")
-                .addResourceLocations("file:///C:/cinemoa-profile/");
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 정적 리소스는 클래스패스에서 서빙
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations(
+                        "classpath:/static/images/",  // 기본 프로필 이미지가 들어있는 곳
+                        "classpath:/static/"
+                )
+                .setCachePeriod(0);
+
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/js/**")
+                .addResourceLocations("classpath:/static/js/");
+
+    }
+
+
 }
