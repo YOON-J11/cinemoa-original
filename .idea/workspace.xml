@@ -4,8 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35ba5e81-8e24-4f1c-a455-44e2720423c0" name="Changes" comment="프로필이미지오류 수정">
+    <list default="true" id="35ba5e81-8e24-4f1c-a455-44e2720423c0" name="Changes" comment="설정변경">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.2/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.2/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.2/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.2/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.2/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.2/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/build/resources/main/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,6 +91,7 @@
     "Gradle.cinemoa [bootRun].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "member",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/cinemoa",
@@ -92,10 +101,20 @@
   <component name="RunManager">
     <configuration name="cinemoa [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
+        <option name="env">
+          <map>
+            <entry key="AZURE_STORAGE_CONNECTION_STRING" value="DefaultEndpointsProtocol=https;AccountName=yoonjiwonstorage;AccountKey=txVKQLmNuZzlkAUZ16D4ugHzoGLl+YCrNO/x12A0P7i5Z3AbGzw8YaglKKiyI3y0Kuim2loKBpL6+AStD2KQCg==;EndpointSuffix=core.windows.net" />
+            <entry key="DB_PASSWORD" value="wl184545W" />
+            <entry key="DB_URL" value="jdbc:mysql://jiwonserver2.mysql.database.azure.com:3306/cinemoa?useSSL=true&amp;requireSSL=false&amp;serverTimezone=Asia/Seoul&amp;allowPublicKeyRetrieval=true" />
+            <entry key="DB_USER" value="yjw5619" />
+            <entry key="MAIL_PASSWORD" value="vnnmerxuijepskvf" />
+            <entry key="MAIL_USERNAME" value="desigr.jw@gmail.com" />
+          </map>
+        </option>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -168,13 +187,22 @@
       <option name="project" value="LOCAL" />
       <updated>1758456996721</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="설정변경">
+      <option name="closed" value="true" />
+      <created>1758457707749</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1758457707749</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="프로필 이미지 저장을 Azure Blob으로 마이그레이션" />
     <MESSAGE value="application.properties 수정" />
     <MESSAGE value="프로필이미지오류 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="프로필이미지오류 수정" />
+    <MESSAGE value="설정변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="설정변경" />
   </component>
 </project>
