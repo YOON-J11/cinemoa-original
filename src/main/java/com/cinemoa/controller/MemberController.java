@@ -138,11 +138,13 @@ public class MemberController {
         Member member = memberService.login(memberId, password);
         if (member == null) {
             model.addAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            model.addAttribute("redirect", redirect == null ? "" : redirect);
             return "member/login";
         }
 
         if (member.isDeleted()) {
             model.addAttribute("error", "탈퇴한 회원입니다. 로그인할 수 없습니다.");
+            model.addAttribute("redirect", redirect == null ? "" : redirect);
             return "member/login";
         }
 
