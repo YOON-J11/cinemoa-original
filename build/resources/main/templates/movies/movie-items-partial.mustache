@@ -1,0 +1,50 @@
+{{#movies}}
+    <div class="item">
+        <div class="item-wrap">
+            {{#mainImageUrl}}
+                <div class="main-image">
+                    <div class="over_box">
+                        <div class="inner">
+                            <a href="/ticketing/{{movieId}}">예매하기</a>
+                            <a href="/movies/{{movieId}}">상세정보</a>
+                        </div>
+                    </div>
+                    <img src="/images/movie/{{mainImageUrl}}" alt="{{title}}">
+                </div>
+            {{/mainImageUrl}}
+            {{^mainImageUrl}}
+                <div class="main-image empty">이미지없음</div>
+            {{/mainImageUrl}}
+            <div class="item-tit">
+                <p class="age">
+                    {{#ageRating}}
+                        {{#isAll}}<span class="movie-grade age-all"></span>{{/isAll}}
+                        {{#is12}}<span class="movie-grade age-12"></span>{{/is12}}
+                        {{#is15}}<span class="movie-grade age-15"></span>{{/is15}}
+                        {{#is19}}<span class="movie-grade age-19"></span>{{/is19}}
+                    {{/ageRating}}
+                </p>
+                <h5>{{title}}</h5>
+            </div>
+            <div class="item-info">
+                <span class="rate">예매율<span class="rating">{{reservationRate}}</span>%</span>
+                <span class="date">
+                    {{#releaseDate}}개봉일<span class="format-date">{{releaseDate}}</span>{{/releaseDate}}
+                    {{^releaseDate}}개봉일미정{{/releaseDate}}
+                </span>
+            </div>
+            <div class="item-btn">
+                <div class="like-btn" data-movie-id="{{movieId}}">
+                    <button class="heart-button {{#likedByCurrentUser}}active{{/likedByCurrentUser}}">
+                        <svg width="15px" height="15px" viewBox="0 0 15 15" version="1.1" id="heart" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.91,6.75c-1.17,2.25-4.3,5.31-6.07,6.94c-0.1903,0.1718-0.4797,0.1718-0.67,0C5.39,12.06,2.26,9,1.09,6.75&#xA;&#x9;C-1.48,1.8,5-1.5,7.5,3.45C10-1.5,16.48,1.8,13.91,6.75z" stroke="black"/>
+                        </svg>
+                    </button>
+                    <span class="likesCount">{{likesCount}}</span>
+                </div>
+                <a href="/ticketing/{{movieId}}" class="reservation-btn">예매하기</a>
+            </div>
+        </div>
+    </div>
+{{/movies}}
+<div data-has-next="{{hasNext}}" style="display:none;"></div>

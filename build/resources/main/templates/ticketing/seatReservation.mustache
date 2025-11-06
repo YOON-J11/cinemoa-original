@@ -1,0 +1,148 @@
+<link rel="stylesheet" href="/css/ticketing/seatReservation.css?v={{ timestamp }}" />
+{{> common/header }}
+<div class="container reservation-wrapper">
+    <!-- 왼쪽: 좌석 선택 영역 -->
+    <div class="seat-selection" data-is-morning="{{isMorning}}" data-screen-type="{{screenType}}"
+        data-special="{{isImax}}">
+        <div class="title">
+            <h2>빠른예매</h2>
+            <button class="reset-btn"><img src="/images/icons/reset-icon.png">초기화</button>
+        </div>
+        <!-- 관람 인원 선택 -->
+        <div class="person-selection">
+            <div class="person-selection-inner">
+                <span>성인</span>
+                <div class="person-count">
+                    <button>-</button>
+                    <input type="text" value="0" readonly>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="person-selection-inner">
+                <span>청소년</span>
+                <div class="person-count">
+                    <button>-</button>
+                    <input type="text" value="0" readonly>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="person-selection-inner">
+                <span>경로</span>
+                <div class="person-count">
+                    <button>-</button>
+                    <input type="text" value="0" readonly>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="person-selection-inner">
+                <span>우대</span>
+                <div class="person-count">
+                    <button>-</button>
+                    <input type="text" value="0" readonly>
+                    <button>+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 좌석 배치도 -->
+        <div class="seat-map">
+            <div class="screen-label">SCREEN</div>
+            {{#seatRowList}}
+            <div class="row" data-row="{{row}}">
+                <span class="row-label">{{row}}</span>
+                <div class="seat-line">
+                    {{#seats}}
+                    {{#isGap}}
+                    <span class="seat-gap"></span>
+                    {{/isGap}}
+                    {{^isGap}}
+                    <span class="seat
+                            {{#isReserved}}disabled{{/isReserved}}
+                            {{#isVip}}vip{{/isVip}}
+                            {{#isAccessible}}accessible{{/isAccessible}}" data-seat-id="{{seatId}}"
+                        data-price="{{price}}">
+                        {{seatNumber}}
+                    </span>
+                    {{/isGap}}
+                    {{/seats}}
+                </div>
+            </div>
+            {{/seatRowList}}
+        </div>
+
+    </div>
+
+    <!-- 오른쪽: 예매 정보 영역 -->
+    <div class="reservation-summary">
+        <div class="movie-info">
+            <div class="movie-title">
+                <h3>{{movie.title}} <img src="{{ageImagePath}}" alt="관람등급" class="rating"></h3>
+                <p>{{movie.genre}}</p>
+            </div>
+            <div class="cinema-info">
+                <div class="cinema-info-left">
+                    <p style="margin-bottom: 25px;">
+                        {{screen.screenName}}
+                        {{#screenType}}
+                        {{^isStandard}} ({{screenType}}){{/isStandard}}
+                        {{/screenType}}
+                    </p>
+                    <p>{{formattedDate}}</p>
+                    <p>
+                        {{#isMorning}}☀️ {{/isMorning}}{{formattedStartTime}} ~ {{formattedEndTime}}
+                    </p>
+                </div>
+                <img src="/images/movie/{{movie.mainImageUrl}}" alt="포스터" class="poster">
+            </div>
+        </div>
+
+        <div class="legend">
+            <ul>
+                <li><span class="box selected"></span>선택</li>
+                <li><span class="box disabled">✕</span>선택불가</li>
+            </ul>
+            <ul>
+                <li><span class="box normal"></span>일반석</li><!--seats테이블의 seat_typs STANDARD-->
+                <li><span class="box accessible"></span>장애인석</li><!--seats테이블의 seat_typs DISABLED-->
+                <li><span class="box vip"></span>VIP석</li><!--seats테이블의 seat_typs VIP-->
+            </ul>
+        </div>
+
+        <div class="selected-seats">
+            <h4>선택좌석</h4>
+            <ul>
+
+            </ul>
+        </div>
+
+        <div class="price-info">
+            <strong>최종결제금액</strong>
+            <p><span>0</span> 원</p>
+        </div>
+
+        <div class="navigation">
+            <button class="prev">이전</button>
+            <button class="next" type="button">다음</button>
+        </div>
+    </div>
+</div>
+
+<!-- 로그인 유도 모달 -->
+<div id="loginRequiredModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <p>로그인이 필요한 서비스입니다.</p>
+        <div class="modal-actions">
+            <button id="loginMemberBtn">회원 로그인</button>
+            <button id="loginGuestBtn">비회원 로그인</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const movieId = "{{movieId}}";
+    const showtimeId = "{{showtimeId}}";
+    const screenId = "{{screenId}}";
+</script>
+
+<script src="/js/ticketing/seatReservation.js"></script>
+{{> common/footer }}

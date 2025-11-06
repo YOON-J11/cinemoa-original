@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <link rel="icon" href="/images/icons/favicon.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>cinemoa</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.css"/>
+    <link rel="stylesheet" href="/css/reset.css"/>
+    <link rel="stylesheet" href="/css/mypage/profileEditPopup.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2 class="title">프로필 수정</h2>
+    </div>
+
+    <form method="post" action="/mypage/information/profileEdit" enctype="multipart/form-data" class="edit-form">
+        <!-- 프로필 이미지 영역 -->
+        <div class="form-row profile-section">
+            <div class="profile-label">프로필 사진</div>
+            <div class="profile-content">
+                <img src="{{profileImageUrl}}" alt="프로필 이미지" class="profile-preview">
+                <div class="profile-buttons">
+                    <label for="profileImg" class="btn">사진변경</label>
+                    <input type="file" id="profileImg" name="profileImg" accept="image/*" hidden>
+                    <button type="button" class="btn" id="resetDefaultImgBtn">기본이미지</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 닉네임 입력 영역 -->
+        <div class="form-row nickname-section">
+            <div class="profile-label">닉네임</div>
+            <div class="profile-content">
+                <input type="text" id="nickname" name="nickname" value="{{nickname}}" required class="input-nickname">
+            </div>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-confirm">적용</button>
+            <button type="button" class="btn btn-cancel" onclick="window.close()">취소</button>
+        </div>
+    </form>
+</div>
+<script src="/js/mypage/profileEditPopup.js"></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+.bookingdetail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.container-title-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.back-button svg {
+  width: 22px;
+  height: 22px;
+  fill: #333;
+}
+
+.container-title {
+    color: #006f7c;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.detail-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+/* 상단 정보 */
+.detail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.reservation-date {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.detail-header div {
+  line-height: 1.6;
+}
+
+/* 영화 정보 */
+.detail-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-contents-info {
+  display: flex;
+  gap: 16px;
+}
+
+.poster img {
+  width: 120px;
+  height: 172px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.detail-contents-info-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.movie-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+}
+
+.status {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.status.confirmed {
+  color: #006f7c;
+}
+
+.status.cancelled {
+  color: #e60000;
+}
+
+.status.unknown {
+  color: #777;
+}
+
+/* 결제 금액 섹션 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.total-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #e60023;
+}
+
+.payment-item,
+.payment-subitem,
+.total-payment {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: 12px 0;
+}
+
+.payment-subitem {
+  color: #666;
+}
+
+.total-payment {
+  margin-top: 20px;
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+/* 결제 정보 */
+.payment-section {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.payment-section div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.payment-section p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.payment-section p strong {
+  font-weight: bold;
+  color: #000;
+}

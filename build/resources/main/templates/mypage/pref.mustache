@@ -1,0 +1,69 @@
+<link rel="stylesheet" href="/css/mypage/pref.css?v={{ timestamp }}" />
+<div class="pref-container">
+    <h2 class="container-title">선호관람정보 설정</h2>
+
+    <form method="post" action="/member/information/pref/update">
+        <!-- 선호 극장 선택 -->
+        <div class="form-group">
+            <label>선호 극장 선택</label>
+
+            <div class="preference-arear">
+                <!-- 지역 선택 -->
+                <div class="custom-select-wrapper select-city">
+                    <div class="custom-select" id="regionSelectBox">지역을 선택해주세요</div>
+                    <div class="options" id="regionOptions">
+                        {{#regions}}
+                            <div class="option region-option" data-id="{{region}}">{{region}}</div>
+                        {{/regions}}
+                    </div>
+                </div>
+
+                <!-- 영화관 선택 -->
+                <div class="custom-select-wrapper select-cinema" id="cinemaSelectWrapper" style="display: none;">
+                    <div class="custom-select" id="cinemaSelect">영화관을 선택해주세요</div>
+                    <div class="options" id="cinemaOptions">
+                        <!-- 선택된 지역에 따라 JS에서 동적으로 추가 -->
+                    </div>
+                </div>
+                {{#selectedCinemaId}}
+                    <input type="hidden" name="preferredCinema" id="preferredCinema" value="{{selectedCinemaId}}">
+                {{/selectedCinemaId}}
+                {{^selectedCinemaId}}
+                    <input type="hidden" name="preferredCinema" id="preferredCinema" value="">
+                {{/selectedCinemaId}}
+            </div>
+        </div>
+
+
+        <!-- 전체 영화관 목록을 숨겨진 상태로 렌더링 -->
+        <div id="allCinemas" style="display: none;">
+            {{#cinemas}}
+                <div class="option cinema-option" data-id="{{cinemaId}}" data-region="{{region}}">{{name}}</div>
+            {{/cinemas}}
+        </div>
+</div>
+
+<!-- 선호 장르 선택 -->
+<div class="form-group">
+    <label>선호 장르 <span style="font-size: 0.85em;">(최대 3개)</span></label>
+    <div class="genre-checkboxes">
+        {{#genres}}
+            <label class="genre-item">
+                <input type="checkbox" name="preferredGenres[]" value="{{name}}" {{#checked}}checked{{/checked}}>
+                <span>{{name}}</span>
+            </label>
+        {{/genres}}
+    </div>
+</div>
+
+<!-- 저장 & 초기화 버튼 -->
+<div class="form-group btn-group">
+    <button type="submit" class="btn btn-primary">저장</button>
+    <button type="button" id="resetBtn" class="btn btn-secondary">
+        <img src="/images/icons/reset-icon.png">초기화
+    </button>
+</div>
+</form>
+</div>
+
+<script src="/js/mypage/pref.js"></script>

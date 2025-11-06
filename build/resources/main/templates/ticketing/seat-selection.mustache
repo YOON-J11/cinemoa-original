@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        .info-box { background-color: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info-box h2 { color: #0056b3; margin-top: 0; }
+        .info-box p { margin: 5px 0; }
+        .back-link { display: block; margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; text-align: center; width: 150px; }
+        .back-link:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+<h1>{{title}} 페이지</h1>
+
+<div class="info-box">
+    <h2>상영 정보 (Showtime)</h2>
+    <p><strong>상영 ID:</strong> {{showtime.showtimeId}}</p>
+    <p><strong>상영 시간:</strong> {{showtime.startTime}}</p>
+</div>
+
+<div class="info-box">
+    <h2>영화 정보 (Movie)</h2>
+    <p><strong>영화 ID:</strong> {{movie.movieId}}</p>
+    <p><strong>영화 제목:</strong> {{movie.title}}</p>
+    <p><strong>감독:</strong> {{movie.director}}</p>
+    <p><strong>장르:</strong> {{movie.genre}}</p>
+    <p><strong>개봉일:</strong> {{movie.releaseDate}}</p>
+    <p><strong>등급:</strong> {{movie.ageRating}}</p>
+</div>
+
+<div class="info-box">
+    <h2>상영관 정보 (Screen)</h2>
+    <p><strong>상영관 ID:</strong> {{screen.screenId}}</p>
+    <p><strong>상영관 이름:</strong> {{screen.screenName}}</p> <!-- 이 부분이 screenName으로 수정되었습니다. -->
+    <p><strong>총 좌석 수:</strong> {{screen.totalSeats}}</p>
+</div>
+
+<a href="/movies" class="back-link">영화 목록으로 돌아가기</a>
+</body>
+</html>

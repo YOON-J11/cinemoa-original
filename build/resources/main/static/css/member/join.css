@@ -1,0 +1,205 @@
+/* 기본 배경색 */
+body {
+}
+
+/* 요소 숨김 */
+.hidden {
+  display: none;
+}
+
+/* ===== [ 레이아웃 ] ===== */
+.container {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 40px;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo svg {
+  height: 50px;
+  color: #006f7c;
+}
+
+/* ===== [ 진행 단계 표시 ] ===== */
+.step-indicator {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 35px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.step-indicator li {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  border-bottom: 3px solid #ddd;
+  color: #888;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.step-indicator li.current {
+  border-bottom: 3px solid #006f7c;
+  color: #006f7c;
+  font-weight: 700;
+}
+
+/* ===== [ 이메일 박스 ] ===== */
+.email-box {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.email-icon svg {
+  width: 90px;
+  height: 90px;
+  fill: #006f7c;
+  margin-bottom: 15px;
+}
+
+.info-text {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  padding: 20px 0;
+}
+
+/* ===== [ 입력 필드 ] ===== */
+.input-group {
+  margin-bottom: 20px;
+  position: relative; /* 추가: 타이머 정렬용 */
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"]{
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  background-color: white; /* 추가: 오토필 제거 + 하늘색 배경 방지 */
+}
+
+/* 포커스 시 테두리 강조 */
+input:focus {
+  border-color: #006f7c;
+  outline: none;
+}
+
+/* ===== [ 타이머 - 입력창 내부 정렬 ] ===== */
+#timer {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: red;
+  pointer-events: none;
+}
+
+/* ===== [ 오류 메시지 ] ===== */
+#emailError {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+#verifyResult {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #d32f2f;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ===== [ 버튼 ] ===== */
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #006f7c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #004f59;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* ===== [ 기타 ] ===== */
+#timer {
+  display: block;
+  font-size: 13px;
+  color: red;
+  margin-bottom: 6px;
+  text-align: right;
+  position: static;
+  transform: none;
+}
+
+/* ===== [ 약관 영역 ] ===== */
+.terms-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 180px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 6px;
+}
+
+.input-msg{
+    margin-top: 10px;
+}
+
+/* ====== [  step4 하단 버튼 설정  ] ==== */
+.step4-bottom-box {
+  display: flex;
+  gap: 15px;
+
+}
+
+.step4-bottom-box a{
+  border: 1px solid #006f7c;
+  border-radius: 10px;
+  width: 50%;
+  padding: 20px;
+  color: #006f7c;
+}
+.step4-bottom-box a:hover{
+  background-color: #f5feff;
+}
+
+.step4-bottom-box a img{
+  width: 35px;
+  height: auto;
+  filter: invert(21%) sepia(92%) saturate(2190%) hue-rotate(168deg) brightness(93%) contrast(102%);
+}
+.step4-bottom-box a p {
+  margin-top: 15px;
+}

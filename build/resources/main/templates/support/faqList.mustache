@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/css/support/supportList.css?v={{ timestamp }}" />
+
+<div class="support-list-container">
+    <div class="title-area">
+        <h2 class="section-title">자주 묻는 질문</h2>
+    </div>
+
+    <div class="search-wrap">
+        <form method="get" action="/support/faq" style="display: flex; gap: 8px; width: 100%;">
+            <input name="keyword" class="txt-input" placeholder="검색어를 입력해주세요." type="search" value="{{#keyword}}{{.}}{{/keyword}}">
+            <button type="submit" class="btn-sch" title="검색하기">🔍</button>
+        </form>
+    </div>
+
+    <table class="list-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>질문</th>
+            <th>카테고리</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{^faqs.content}}
+            <tr><td class="no-list" colspan="3">등록된 FAQ가 없습니다.</td></tr>
+        {{/faqs.content}}
+
+        {{#faqs.content}}
+            <tr class="tr-style faq-question" data-faq-id="{{faqId}}">
+                <td>{{faqId}}</td>
+                <td><span class="list-link">{{question}}</span></td>
+                <td>{{category}}</td>
+            </tr>
+            <tr class="faq-answer" id="answer-{{faqId}}" style="display: none;">
+                <td colspan="3">{{answer}}</td>
+            </tr>
+        {{/faqs.content}}
+
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {{#faqs.hasPrevious}}
+            <a href="?page={{faqs.number}}&keyword={{keyword}}" class="page prev">«</a>
+        {{/faqs.hasPrevious}}
+
+        {{#pages}}
+            <a href="?page={{pageNumber}}&keyword={{keyword}}" class="page {{#isActive}}active{{/isActive}}">{{pageNumber}}</a>
+        {{/pages}}
+
+        {{#faqs.hasNext}}
+            <a href="?page={{nextPage}}&keyword={{keyword}}" class="page next">»</a>
+        {{/faqs.hasNext}}
+
+    </div>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const faqRows = document.querySelectorAll(".faq-question");
+
+        faqRows.forEach(row => {
+            row.addEventListener("click", () => {
+                const faqId = row.dataset.faqId;
+                const answerRow = document.getElementById("answer-" + faqId);
+                const isVisible = answerRow.style.display === "table-row";
+                answerRow.style.display = isVisible ? "none" : "table-row";
+            });
+        });
+    });
+</script>

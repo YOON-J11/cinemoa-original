@@ -1,0 +1,43 @@
+{{> common/header }}
+<link rel="stylesheet" href="/css/payment/payment.css?v={{ timestamp }}" />
+
+<div class="container payment-page">
+    <h2>결제</h2>
+
+    <!-- 요약 -->
+    <div class="summary-card">
+        <div class="movie-line">
+            <h3>{{movie.title}} <img src="{{ageImagePath}}" alt="관람등급" class="rating"></h3>
+            {{#movie.genre}}<p class="genre">{{movie.genre}}</p>{{/movie.genre}}
+        </div>
+        <div class="info-grid">
+            <div><div class="label">극장</div><div class="value">{{cinema.name}}</div></div>
+            <div><div class="label">상영관</div><div class="value">{{screen.screenName}}{{#screenType}}{{^isStandard}} ({{screenType}}){{/isStandard}}{{/screenType}}</div></div>
+            <div><div class="label">일시</div><div class="value">{{formattedDate}} · {{formattedStartTime}} ~ {{formattedEndTime}}</div></div>
+            <div><div class="label">좌석</div><div class="value">{{seatInfo}}</div></div>
+        </div>
+    </div>
+
+    <div class="payment-box">
+        <p>결제 금액: <strong id="amount">{{amount}}</strong>원</p>
+        <button id="pay-button">결제하기</button>
+    </div>
+</div>
+
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
+<script>
+    const amount     = Number("{{amount}}")    || 0;
+    const movieId    = Number("{{movieId}}")   || 0;
+    const showtimeId = Number("{{showtimeId}}")|| 0;
+    const screenId   = Number("{{screenId}}")  || 0;
+    const seatInfo   = "{{seatInfo}}"          || "";
+
+    const seatIdList = ("{{#seatIdList}}{{.}},{{/seatIdList}}" || "").split(",").filter(Boolean).map(Number);
+
+    const buyerEmail = (function(v){ return (v && v !== "null") ? v : ""; })("{{buyerEmail}}");
+    const buyerName  = (function(v){ return (v && v !== "null") ? v : ""; })("{{buyerName}}");
+</script>
+
+<script src="/js/payment/payment.js?v={{ timestamp }}"></script>
+{{> common/footer }}

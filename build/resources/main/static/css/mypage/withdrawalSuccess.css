@@ -1,0 +1,46 @@
+body{
+    background-color: #f4f4f4;
+}
+.container {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo svg {
+  height: 50px;
+  color: #006f7c;
+}
+.withdrawal-success{
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap : 40px;
+    align-items: center;
+    justify-content: center;
+}
+.withdrawal-success h2{
+    font-weight: bold;
+    font-size: 20px;
+}
+.withdrawal-success a{
+    padding: 10px 20px;
+    background-color: #006f7c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: background-color 0.2s;
+    width: fit-content;
+}
+.withdrawal-success a:hover{
+    background-color: #004f59;
+}

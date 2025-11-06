@@ -1,0 +1,69 @@
+/* ==== [container] ==== */
+.support-container{
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+/* ==== [경로영역] ==== */
+.page-util{
+    padding: 10px 20px;
+}
+.inner-wrap{
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 0 20px;
+}
+/* ==== [ 메뉴영역 ] ==== */
+.support-menu{
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+.support-menu li a:hover{
+    color: #006f7c;
+}
+.support-menu > a {
+    width: 100%;
+    padding: 30px;
+    text-align: center;
+    background-color: #006f7c;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+.support-menu > a:hover{
+    background-color: #137f8b;
+}
+.support-menu-ul{
+    display: flex;
+    flex-direction: column;
+}
+.support-menu-ul > li{
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+}
+.support-menu-ul > li:last-child{
+    border: none;
+}
+.support-menu-ul li a{
+    width: 100%;
+    padding: 15px;
+    display: block;
+}
+.support-menu-ul-sub {
+    background-color: #fff;
+    padding: 10px;
+}
+.support-menu-ul-sub a{
+    padding: 10px !important;
+}
+.support-contents{
+    flex: 1;
+}

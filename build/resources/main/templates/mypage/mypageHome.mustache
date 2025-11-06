@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="/css/mypage/mypageHome.css?v={{ timestamp }}" />
+<div class="mypage-home-card">
+    <div class="card-top">
+        <img src="{{profileImageUrl}}" alt="프로필 이미지">
+        <div class="profile-info">
+            <h1>안녕하세요! <span>{{name}}</span>님!</h1>
+            <P>아이디 : <span>{{memberId}}</span></P>
+            <p>닉네임 : <span>{{nickname}}</span></p>
+            <button onclick="openProfileEditPopup()">프로필 수정</button><!--클릭시 프로필 수정 페이지가 팝업으로 나타남-->
+        </div>
+    </div>
+    <!--<div class="card-bottom">추후 멤버십등급, 포인트 등..이곳에 나타낼 예정</div>-->
+</div>
+<div class="mypage-home-col mymovie">
+    <div class="col-left">
+        <div class="col-title"><h2>나의 무비</h2></div>
+        <div class="movie-items">
+            <a href="/mypage/mymovie"><!--클릭시 해당 리스트 페이지로-->
+                <p>내가 본 영화</p>
+                <img src="/images/icons/videocamera-icon.png">
+                <p>총 <strong>{{movieCount}}</strong>건</p>
+            </a>
+            <a href="/mypage/myreview"><!--클릭시 해당 리스트 페이지로-->
+                <p>내가 쓴 관람평</p>
+                <img src="/images/icons/review-icon.png">
+                <p>총 <strong>{{reviewCount}}</strong>건</p>
+            </a>
+        </div>
+    </div>
+    <div class="col-right">
+        <div class="col-title"><h2>선호관람정보</h2><a href="/mypage/information/pref" class="btn-pref-setting">설정</a></div><!--설정클릭시 선호관람정보 설정 페이지로 or 선호관람정보 수정 모달창 나타남-->
+        <div class="col-contents">
+            <p>선호 극장 : {{#preferredCinemaName}}{{preferredCinemaName}}{{/preferredCinemaName}}{{^preferredCinemaName}} 설정안됨{{/preferredCinemaName}}</p>
+            <p>선호 장르 : {{#preferredGenres}}{{preferredGenres}}{{/preferredGenres}}{{^preferredGenres}} 설정안됨{{/preferredGenres}}</p>
+        </div>
+    </div>
+</div>
+<div class="mypage-home-col">
+    <div class="col-title"><h2>최근 예매내역</h2><span>{{totalReservations}}건</span><a href="/mypage/bookinglist">더보기</a></div>
+    <table class="mypage-table">
+        <thead>
+            <tr>
+                <th>영화 제목</th>
+                <th>예매일</th>
+                <th>극장</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#recentReservations}}
+        <tr>
+            <td>{{movieTitle}}</td>
+            <td>{{formattedReservationDate}}</td>
+            <td>{{cinemaName}}</td>
+        </tr>
+        {{/recentReservations}}
+        {{^recentReservations}}
+        <tr>
+            <td colspan="3">최근 예매내역이 없습니다.</td>
+        </tr>
+        {{/recentReservations}}
+        </tbody>
+    </table>
+</div>
+<div class="mypage-home-col">
+    <div class="col-title"><h2>내 문의내역</h2><span>{{totalInquiries}}건</span><a href="/mypage/myinquiry">더보기</a></div>
+    <table class="mypage-table">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>등록일</th>
+            <th>답변상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#recentInquiries}}
+        <tr>
+            <td>{{title}}</td>
+            <td>{{regDate}}</td>
+            <td class="{{#replyContent}}answered{{/replyContent}}{{^replyContent}}pending{{/replyContent}}">
+                {{#replyContent}}답변완료{{/replyContent}}{{^replyContent}}대기중{{/replyContent}}
+            </td>
+        </tr>
+        {{/recentInquiries}}
+        {{^recentInquiries}}
+        <tr>
+            <td colspan="3">최근 문의내역이 없습니다.</td>
+        </tr>
+        {{/recentInquiries}}
+        </tbody>
+    </table>
+</div>
+<script src="/js/mypage/mypageHome.js"></script>

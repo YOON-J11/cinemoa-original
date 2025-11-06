@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="/css/mypage/mymovieAndmyreview.css?v={{ timestamp }}" />
+<div class="mymovie-container">
+    <h2 class="container-title">나의 영화</h2>
+    <div class="tab-menu">
+        <a href="/mypage/mymovie" class="{{#mymovie}}active{{/mymovie}}">내가 본 영화</a>
+        <a href="/mypage/myreview" class="{{#myreview}}active{{/myreview}}">내가 쓴 관람평</a>
+        <a href="/mypage/mylike" class="{{#mylike}}active{{/mylike}}">좋아요 한 영화</a>
+    </div>
+
+    {{#watchedMovies}}
+    <div class="movie-card">
+        <img src="/images/movie/{{poster}}" alt="{{title}}" class="poster">
+        <div class="movie-info">
+            <div class="title-row">
+                <h3 class="title">{{title}}</h3>
+                <img src="/images/movie/{{grade}}_46x46.png" alt="{{grade}}세 이상 관람가" class="grade-image">
+            </div>
+            <div class="info-text">{{date}} {{day}} {{time}}<br>{{cinemaName}} {{screenName}}</div>
+            <div class="tags">
+                <span class="tag">{{seatType}} {{personCount}}</span>
+            </div>
+            <p class="review-content">{{reviewContent}}</p>
+        </div>
+    </div>
+    {{/watchedMovies}}
+
+    {{^watchedMovies}}
+    <p class="no-data">작성한 관람평이 없습니다.</p>
+    {{/watchedMovies}}
+</div>

@@ -1,0 +1,388 @@
+{{>common/header}}
+<link rel="stylesheet" href="/css/ticketing.css" />
+
+<div class="container ticketing">
+    <div class="ticketing-wrap">
+        <div class="inner">
+            <!-- 영화 선택 -->
+            <div class="movie-choice">
+                <div id="step1" class="step">
+                    <h3>영화</h3>
+                    <div id="movieList">
+                        {{#movies}}
+                            <div class="movie-item" data-movie-id="{{movieId}}">
+                                <div class="tit-wrap">
+                                    <div class="tit">
+                                        <span class="age movie-grade age-{{ageRating}}">{{ageRating}}</span>
+                                        <h5 class="movie-tit">{{title}}</h5>
+                                        <p class="running-time"> {{runningTime}}분</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/movies}}
+                    </div>
+                    <input type="hidden" id="selectedMovieId" value="{{selectedMovieId}}" />
+                </div>
+            </div>
+
+            <!-- 지역 선택 -->
+            <div class="theater-choice">
+                <h3>극장</h3>
+                <div class="theater-wrap">
+                    <div id="step2" class="step inactive">
+                        <div id="regionList">
+                            {{#regions}}
+                                <div class="btn-wrap">
+                                    <button type="button" class="btn btn-outline-secondary region-button" data-region="{{.}}">
+                                        {{.}}
+                                    </button>
+                                </div>
+                            {{/regions}}
+                        </div>
+                    </div>
+                    <div id="step3" class="step inactive">
+                        <div id="cinemaList"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 시간 선택 -->
+            <div class="time-choice">
+                <h3>시간</h3>
+                <div id="step4" class="inactive">
+                    <div id="availableDates"></div>
+                    <input type="hidden" id="selectedDate">
+                </div>
+                <div id="step5" class="inactive">
+                    <div class="input-wrap">
+                        <div id="timeSlots"></div>
+                        <input type="hidden" id="selectedShowtime" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 상영시간 확인 팝업 -->
+<div id="confirmShowtimePopup" class="custom-modal" style="display:none;">
+    <div class="custom-modal-content">
+        <div class="modal-top">
+            <p>선택한 상영 정보를 확인해주세요</p>
+            <button id="closeConfirmPopup" class="close-btn"><img src="https://www.lottecinema.co.kr/NLCHS/Content/images/icon/close_19_wht.png"></button>
+        </div>
+        <div class="inner">
+            <div id="confirmShowtimeInfo"></div>
+            <div class="btn-wrap">
+                <button id="closeConfirmPopup2">취소</button>
+                <button id="confirmGoToSeats" class="btn btn-primary">인원/좌석 선택</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+    let selectedMovieId = document.getElementById('selectedMovieId').value || null;
+    let currentStep = selectedMovieId ? 2 : 1;
+
+    let selectedRegion = null;
+    let selectedCinemaId = null;
+    let selectedDate = null;
+    let selectedShowtimeId = null;
+
+    // 날짜 목록을 리셋하지 않도록 수정
+    const updateStepVisibility = () => {
+        for (let i = 2; i <= 5; i++) {
+            const step = document.getElementById('step' + i);
+            step.classList.toggle('inactive', currentStep < i);
+        }
+    };
+
+    // 날짜 목록을 항상 표시하도록 유지
+    function renderWeekDatesWithAvailability(availableDates = []) {
+        const container = document.getElementById('availableDates');
+        container.innerHTML = ''; // 기존 내용은 지우지 않음
+
+        const today = new Date();
+       // const todayStr = today.toISOString().split('T')[0];
+       const todayStr = today.toLocaleDateString('sv-SE'); // '2025-07-23' 형태, 한국 시간 기준
+
+        // 21일씩 날짜 목록을 렌더링
+        for (let i = 0; i < 21; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+
+            //const dateStr = date.toISOString().split('T')[0];
+            const dateStr = date.toLocaleDateString('sv-SE');
+            const displayDay = date.getDate();
+
+            const div = document.createElement('div');
+            div.innerHTML = `<button type="button" class="btn date-optionbutton" data-date="${dateStr}">${displayDay}</button>`;
+            container.appendChild(div);
+
+            // 오늘 날짜 자동 선택 및 showtimes 조회
+            if (dateStr === todayStr) {
+                setTimeout(() => {
+                    div.querySelector('button').classList.add('btn-primary');
+                    selectedDate = dateStr;
+                    if (selectedMovieId && selectedCinemaId) {
+                        fetchShowtimes(selectedMovieId, selectedCinemaId, selectedDate);
+                        currentStep = 5;
+                        updateStepVisibility();
+                    }
+                }, 0);
+            }
+        }
+
+         // "영화관을 선택해주세요" 메시지 출력
+        // const messageDiv = document.createElement('div');
+        // messageDiv.innerHTML = `<p class="alert alert-info text-center" id="selectCinemaMessage">영화관을 선택해주세요.</p>`;
+        // container.appendChild(messageDiv);
+    }
+
+    // 날짜 목록을 항상 표시하도록 하되, 영화관을 선택하지 않더라도 빈 상태로 렌더링
+    renderWeekDatesWithAvailability();
+
+    // 영화관을 선택한 후 날짜 목록을 업데이트
+    document.getElementById('cinemaList').addEventListener('click', e => {
+        const btn = e.target.closest('.cinema-button');
+        if (!btn) return;
+
+        selectedCinemaId = btn.dataset.cinemaId;
+        fetchAvailableDates(selectedMovieId, selectedCinemaId);
+    });
+
+    // 영화관 선택 후 날짜 목록 갱신
+    function fetchAvailableDates(movieId, cinemaId) {
+        fetch(`/ticketing/api/dates?movieId=${movieId}&cinemaId=${cinemaId}`)
+            .then(res => res.json())
+            .then(dates => {
+                renderWeekDatesWithAvailability(dates || []);
+                // 영화관 선택 메시지 숨기기
+                document.getElementById('selectCinemaMessage').style.display = 'none';
+            });
+    }
+
+    // 영화 선택 클릭
+    document.querySelectorAll('.movie-item').forEach(item => {
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.movie-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            selectedMovieId = item.dataset.movieId;
+            selectedRegion = null;
+            selectedCinemaId = null;
+            selectedDate = null;
+            selectedShowtimeId = null;
+            document.getElementById('regionList').querySelectorAll('.region-button').forEach(b => b.classList.remove('btn-primary'));
+            document.getElementById('cinemaList').innerHTML = '';
+           // document.getElementById('availableDates').innerHTML = '';
+            document.getElementById('timeSlots').innerHTML = '';
+            currentStep = 2;
+            updateStepVisibility();
+        });
+    });
+
+    // 영화 자동 선택
+    if (selectedMovieId) {
+        const selectedMovieElement = document.querySelector(`.movie-item[data-movie-id="${selectedMovieId}"]`);
+        if (selectedMovieElement) {
+            selectedMovieElement.classList.add('selected');
+        }
+        currentStep = 2;
+        updateStepVisibility();
+    }
+
+    // 지역 선택
+    document.getElementById('regionList').addEventListener('click', e => {
+        const btn = e.target.closest('.region-button');
+        if (!btn) return;
+
+        document.querySelectorAll('.region-button').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+
+        selectedRegion = btn.dataset.region;
+        selectedCinemaId = null;
+        selectedDate = null;
+        selectedShowtimeId = null;
+        document.getElementById('cinemaList').innerHTML = '';
+        // document.getElementById('availableDates').innerHTML = '';
+        document.getElementById('timeSlots').innerHTML = '';
+
+        fetch(`/api/ticketing/cinemas?region=${selectedRegion}`)
+            .then(res => res.json())
+            .then(data => {
+                const cinemas = Array.isArray(data) ? data : [];
+
+                if (cinemas.length === 0) {
+                    document.getElementById('cinemaList').innerHTML = '<p>해당 지역에 영화관이 없습니다.</p>';
+                    return;
+                }
+                const container = document.getElementById('cinemaList');
+                container.innerHTML = '';
+                cinemas.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'btn-wrap';
+                    div.innerHTML = `<button type="button" class="btn btn-outline-secondary cinema-button" data-cinema-id="${c.cinemaId}">${c.name}</button>`;
+                    container.appendChild(div);
+                });
+                currentStep = 3;
+                updateStepVisibility();
+            })
+            .catch(err => {
+                alert('영화관 목록을 불러오는데 실패했습니다.');
+                console.error(err);
+            });
+    });
+
+    // 영화관 선택
+    document.getElementById('cinemaList').addEventListener('click', e => {
+        const btn = e.target.closest('.cinema-button');
+        if (!btn) return;
+        document.querySelectorAll('.cinema-button').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+
+        selectedCinemaId = btn.dataset.cinemaId;
+        const cinemaName = btn.textContent.trim();
+
+          window.selectedCinemaName = cinemaName;
+
+        selectedDate = null;
+        selectedShowtimeId = null;
+       // document.getElementById('availableDates').innerHTML = '';
+        document.getElementById('timeSlots').innerHTML = '';
+        fetchAvailableDates(selectedMovieId, selectedCinemaId);
+
+        currentStep = 4;
+        updateStepVisibility();
+    });
+
+    // 날짜 선택
+    document.getElementById('availableDates').addEventListener('click', e => {
+        const btn = e.target.closest('.date-optionbutton');
+        if (!btn) return;
+
+        if (!selectedCinemaId) {
+            alert('영화관을 선택해주세요.');
+            return;
+        }
+
+        document.querySelectorAll('.date-optionbutton').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+        selectedDate = btn.dataset.date;
+
+        document.getElementById('selectedDate').value = selectedDate;
+
+        fetchShowtimes(selectedMovieId, selectedCinemaId, selectedDate, window.selectedCinemaName);
+        currentStep = 5;
+        updateStepVisibility();
+    });
+
+    // 시간 선택
+    document.getElementById('timeSlots').addEventListener('click', e => {
+        const slot = e.target.closest('.time-slot');
+        if (!slot) return;
+
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        slot.classList.add('selected');
+
+        selectedShowtimeId = slot.dataset.showtimeId;
+
+        //document.getElementById('goToSeatSelection').disabled = false;
+
+        // 팝업 열기
+        const popup = document.getElementById('confirmShowtimePopup');
+        const infoDiv = document.getElementById('confirmShowtimeInfo');
+
+        const startTime = slot.querySelector('.start-time')?.innerText || '';
+        const endTime = slot.querySelector('.end-time')?.innerText || '';
+        const screenName = slot.querySelector('.screen-name')?.innerText || '';
+        const cinemaName = window.selectedCinemaName || '';
+
+        // 영화 제목 가져오기
+        const selectedMovieElement = document.querySelector('.movie-item.selected');
+        const selectedMovieTitle = selectedMovieElement ? selectedMovieElement.querySelector('.movie-tit')?.innerText || ''
+        : '';
+        const ageRating = selectedMovieElement?.querySelector('.movie-grade')?.innerText || '';
+
+        // 날짜 포맷 변환
+        const selectedDateInput = document.getElementById('selectedDate');
+        let selectedDateRaw = selectedDateInput?.value || '';
+        let formattedDate = selectedDate.split('-').join('.');
+
+        infoDiv.innerHTML = `
+            <p class="tit"><span class="movie-grade age-${ageRating}">${ageRating}</span>${selectedMovieTitle}</p>
+            <p class="date">${formattedDate}</p>
+            <p class="time">${startTime} ~ ${endTime}</p>
+            <p>${cinemaName} / ${screenName}</p>
+         `;
+
+        popup.style.display = 'flex';
+
+    });
+
+    document.getElementById('confirmGoToSeats').addEventListener('click', () => {
+        if (!selectedShowtimeId) return;
+
+        document.getElementById('confirmShowtimePopup').style.display = 'none';
+        window.location.href = `/ticketing/seats?showtimeId=${selectedShowtimeId}`;
+    });
+
+    document.getElementById('closeConfirmPopup').addEventListener('click', () => {
+        document.getElementById('confirmShowtimePopup').style.display = 'none';
+    });
+    document.getElementById('closeConfirmPopup2').addEventListener('click', () => {
+        document.getElementById('confirmShowtimePopup').style.display = 'none';
+    });
+
+
+
+    // 좌석 선택 버튼 클릭
+    document.getElementById('goToSeatSelection').addEventListener('click', () => {
+        if (!selectedShowtimeId) return;
+        window.location.href = `/ticketing/seats?showtimeId=${selectedShowtimeId}`;
+    });
+
+    // 날짜 목록 업데이트
+    function fetchShowtimes(movieId, cinemaId, date) {
+        const cinemaName = window.selectedCinemaName || "";
+        fetch(`/api/ticketing/showtimes?movieId=${movieId}&cinemaId=${cinemaId}&date=${date}`)
+            .then(res => res.json())
+            .then(showtimes => {
+                const container = document.getElementById('timeSlots');
+                container.innerHTML = '';
+                if (showtimes.length === 0) {
+                    container.innerHTML = `<div class="alert"><img src="https://www.lottecinema.co.kr/NLCHS/Content/images/icon/film.png"><div class="text-wrap">조회 가능한 상영시간이 없습니다.<br>조건을 변경해주세요.</div></div>`;
+                    document.getElementById('goToSeatSelection').disabled = true;
+                } else {
+                    showtimes.forEach(show => {
+                        const start = new Date(show.startTime);
+                        const end = new Date(show.endTime);
+                        const timeDiv = document.createElement('div');
+                         timeDiv.innerHTML = `
+                         <div class="time-slot" data-showtime-id="${show.showtimeId}">
+                            <strong>
+                                <span class="start-time">${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',hour12: false })}</span>
+                                <br> ~ <span class="end-time">${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit',hour12: false })}</span>
+                            </strong>
+                            <div class="info">
+                                ${cinemaName}
+                                <p class="screen-name">${show.screenName}
+                                    <span class="screen-type">(${show.screenType})</span>
+                                </p>
+                            </div>
+                        </div>`;
+                        container.appendChild(timeDiv);
+                    });
+                    document.getElementById('goToSeatSelection').disabled = false;
+                }
+            });
+    }
+
+    updateStepVisibility();
+
+});
+</script>
+{{> common/footer }}

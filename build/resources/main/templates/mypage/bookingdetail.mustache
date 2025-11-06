@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="/css/mypage/bookingdetail.css?v={{ timestamp }}" />
+<div class="bookingdetail-container">
+    <!-- 타이틀 -->
+    <div class="container-title-area">
+        <a href="javascript:history.back()" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g id="_01_align_center" data-name="01 align center">
+                    <path
+                        d="M16.752,23.994,6.879,14.121a3,3,0,0,1,0-4.242L16.746.012,18.16,1.426,8.293,11.293a1,1,0,0,0,0,1.414l9.873,9.873Z" />
+                </g>
+            </svg>
+        </a>
+        <h2 class="container-title">예매/구매 상세 내역</h2>
+    </div>
+
+    <!-- 상단 정보 -->
+    <div class="detail-header detail-card">
+        <p class="reservation-date">{{detail.formattedReservationTime}}</p>
+        <div>
+            <p>{{detail.cinemaName}}</p>
+            <p>결제일: {{detail.formattedPaymentDate}}</p>
+            <p>판매번호: {{detail.salesNumber}}</p>
+        </div>
+    </div>
+
+    <!-- 영화 및 상영 정보 -->
+    <div class="detail-contents detail-card">
+        <h3 class="status {{detail.statusClass}}">{{detail.status}}</h3>
+        <div class="detail-contents-info">
+            <a href="/movies/{{detail.movieId}}" class="poster">
+                <img src="/images/movie/{{detail.mainImageUrl}}" alt="{{detail.movieTitle}}" />
+            </a>
+            <div class="detail-contents-info-right">
+                <p class="movie-title">{{detail.movieTitle}}</p>
+                <p>상영시간 : {{detail.formattedShowDate}} {{detail.formattedShowtime}}</p>
+                <p>상영관 : {{detail.screenName}}</p>
+                <p>좌석 : {{#detail.seats}}{{seatRow}}{{seatNumber}} {{/detail.seats}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="seats-section detail-card">
+        <div class="section-header">
+            <h3>결제금액</h3>
+            <span class="total-price">{{detail.totalPrice}}원</span>
+        </div>
+
+        {{#detail.seats}}
+        <div class="payment-subitem">
+            <div class="item-left">{{seatType}}</div>
+            <div class="item-right">{{price}}원</div>
+        </div>
+        {{/detail.seats}}
+
+        <div class="total-payment">
+            <div class="item-left"><strong>전체금액</strong></div>
+            <div class="item-right"><strong>{{detail.totalPrice}}원</strong></div>
+        </div>
+    </div>
+
+
+
+    <!-- 결제 -->
+    <div class="payment-section detail-card">
+        <div class="section-header">
+            <h3>결제 정보</h3>
+        </div>
+        <div><p>총 금액</p><p>{{detail.totalPrice}}원</p></div>
+        <div><p>할인</p><p>{{detail.discount}}원</p></div>
+        <div><p><strong>최종 결제 금액</strong></p><p><strong>{{detail.finalPayment}}원</strong></p></div>
+        <div><p>결제수단</p><p>{{detail.paymentMethod}}</p></div>
+    </div>
+
+</div>

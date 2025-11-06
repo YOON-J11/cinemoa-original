@@ -1,0 +1,57 @@
+<link rel="stylesheet" href="/css/support/supportList.css?v={{ timestamp }}" />
+
+<div class="support-list-container">
+    <div class="title-area">
+        <h2 class="section-title">공지사항</h2>
+    </div>
+
+    <div class="search-wrap">
+        <form method="get" action="/support/notice" style="display: flex; gap: 8px; width: 100%;">
+            <input name="keyword" class="txt-input" placeholder="검색어를 입력해주세요." type="search" value="{{#keyword}}{{.}}{{/keyword}}">
+            <button type="submit" class="btn-sch" title="검색하기">
+                🔍
+            </button>
+        </form>
+    </div>
+
+    <table class="list-table">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{^notices.content}}
+            <tr><td class="no-list" colspan="3">등록된 공지사항이 없습니다.</td></tr>
+        {{/notices.content}}
+
+        {{#notices.content}}
+            <tr class="tr-style">
+                <td>{{noticeId}}</td>
+                <td>
+                    <a href="/support/notice/{{noticeId}}" class="list-link">{{title}}</a>
+                </td>
+                <td>{{formattedDate}}</td>
+            </tr>
+        {{/notices.content}}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        {{#notices.hasPrevious}}
+            <a href="?page={{notices.number}}&keyword={{keyword}}" class="page prev">«</a>
+        {{/notices.hasPrevious}}
+
+        {{#pages}}
+            <a href="?page={{pageNumber}}&keyword={{keyword}}" class="page {{#isActive}}active{{/isActive}}">{{pageNumber}}</a>
+        {{/pages}}
+
+        {{#notices.hasNext}}
+            <a href="?page={{nextPage}}&keyword={{keyword}}" class="page next">»</a>
+        {{/notices.hasNext}}
+
+    </div>
+
+</div>

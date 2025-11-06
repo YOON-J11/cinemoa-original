@@ -1,0 +1,20 @@
+<div class="fixed-btn-wrapper">
+  <div class="fixed-btn">
+    <div class="btn-ticketing">
+      <a href="/ticketing">예매하기</a>
+    </div>
+    <div class="btn_goto-top">↑</div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const goTopBtn = document.querySelector(".btn_goto-top");
+
+    goTopBtn.addEventListener("click", function () {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  });
+</script>

@@ -1,0 +1,311 @@
+*{outline:none; border: none; background: transparent; font: inherit;}
+*, :after, :before {box-sizing:border-box;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #222;
+    width: 1200px;
+}
+
+.ticketing-wrap {padding: 3rem 0; }
+
+.ticketing-wrap .inner {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-height: 650px;
+    overflow: hidden;
+}
+
+.movie-choice, .theater-choice, .time-choice {
+    width: calc(100% / 3);
+    border-left: 1px solid #ccc;
+    overflow: hidden;
+}
+
+.step {
+    overflow: hidden;
+    height: 100%;
+}
+
+.time-choice {
+    border-right: 1px solid #ccc;
+}
+
+.time-choice #step4 {
+    padding: .5rem;
+    border-bottom: 1px solid #ccc;
+    height: 80px;
+}
+
+.time-choice #step5 { height: calc(100% - 130px);}
+.time-choice #step5 .input-wrap {height: 100%;}
+.time-choice #step5 #timeSlots {
+    height: 100%;
+    overflow-y: scroll;
+    padding-bottom: 1rem;
+}
+.time-choice #step5 #timeSlots::-webkit-scrollbar {display: none; }
+
+.time-choice #step5 .alert {
+    padding: 2rem 1rem 4rem;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .5rem;
+}
+.time-choice #step5 .alert .text-wrap {line-height: 1.2;}
+
+.time-choice button.date-optionbutton {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+}
+
+#availableDates {
+    display: flex;
+    overflow-x: scroll;
+    width: 100%;
+    gap: .5rem;
+    padding: .5rem;
+}
+
+.time-slot {
+    border-bottom: 1px solid #ccc;
+    padding: 1rem;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.time-slot.selected {
+    background: #ebebeb;
+}
+
+.time-slot strong {
+    line-height: 1.2;
+}
+
+.time-slot .start-time {
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.time-slot .info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 14px;
+    gap: 5px;
+}
+
+.time-slot .info .screen-name {
+    font-weight: 600;
+}
+.time-slot .info .screen-type {
+    font-weight: 400;
+}
+
+h3 {
+    font-size: 20px;
+    border-bottom: 1px solid #ccc;
+    font-weight: 600;
+    padding: 0 1rem;
+    line-height: 50px;
+    height: 50px;
+}
+
+#movieList {
+    padding: 1rem;
+    overflow-y: scroll;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+}
+#movieList::-webkit-scrollbar {display: none; }
+
+.movie-item {
+    padding: 10px 5px ;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.movie-item .tit {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 600;
+}
+
+.movie-item.selected {
+    background: #006f7c;
+    color: #fff;
+}
+
+.theater-wrap {display: flex; height: calc(100% - 50px);}
+.theater-wrap .step {width: 50%; }
+.theater-wrap button {
+    padding: 10px 5px;
+    transition: .3s;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+#regionList {
+    border-right: 1px solid #ccc;
+    height: 100%;
+    padding: 1rem;
+    overflow-y: scroll;
+}
+#regionList::-webkit-scrollbar {display: none; }
+
+#cinemaList {
+    height: 100%;
+    padding: 1rem;
+    overflow-y: scroll;
+}
+#cinemaList::-webkit-scrollbar {display: none; }
+
+.running-time {opacity:0;}
+.btn-primary { background: #006f7c; color: #fff;}
+
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-modal-content {
+    background: #fff;
+    width: 80%;
+    height: 90%;
+    overflow-y: auto;
+    border-radius: 10px;
+    position: relative;
+    max-height: 400px;
+    max-width: 500px;
+}
+
+.custom-modal-content .modal-top {
+    background: #006f7c;
+    color: #fff;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    position: relative;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.custom-modal-content .modal-top .close-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #fff;
+    padding: 0;
+    line-height: 0;
+}
+
+.custom-modal-content .tit {
+    font-weight: 600;
+    font-size: 18px;
+    display: flex;
+    line-height: 1;
+    align-items: center;
+    gap: 5px;
+}
+.custom-modal-content .date {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.custom-modal-content .time {
+    font-size: 24px;
+    font-weight: 600;
+}
+.custom-modal-content .inner {
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2rem;
+    gap: 2rem;
+}
+
+#confirmShowtimeInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.custom-modal-content .btn-wrap {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: center;
+}
+.custom-modal-content .btn-wrap button {
+    border: 1px solid #006f7c;
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #006f7c;
+    color: #fff;
+    min-width: 130px;
+}
+.custom-modal-content .btn-wrap button:nth-child(1) {
+    background: #999;
+    border: 1px solid #999;
+}
+
+.movie-grade {
+    display:inline-block;
+    width: 23px;
+    height: 23px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    color: transparent;
+}
+
+.movie-grade.age-ALL {
+    background-image: url(https://img.megabox.co.kr/static/pc/images/common/txt/ALL_46x46.png);
+}
+
+.movie-grade.age-12 {
+    background-image: url(https://img.megabox.co.kr/static/pc/images/common/txt/12_46x46.png);
+}
+
+.movie-grade.age-15 {
+    background-image: url(https://img.megabox.co.kr/static/pc/images/common/txt/15_46x46.png);
+}
+
+.movie-grade.age-19 {
+    background-image: url(https://img.megabox.co.kr/static/pc/images/common/txt/19_46x46.png);
+}

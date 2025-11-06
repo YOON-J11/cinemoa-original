@@ -1,0 +1,126 @@
+.container-title {
+  color: #006f7c;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.booking-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  background-color: #fff;
+}
+
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.booking-header-left {
+  display: flex;
+  gap: 10px;
+  color: #777;
+  align-items: center;
+}
+
+.reservation-date {
+  color: #222;
+}
+
+.booking-body {
+  display: flex;
+  gap: 16px;
+}
+
+.poster {
+  width: 80px;
+  height: 120px;
+  border-radius: 8px;
+  border: 0.5px solid #eee;
+  object-fit: cover;
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+/* 예매 상태 텍스트 색상 */
+.status {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.booking-area {
+}
+
+.status.confirmed {
+  color: #006f7c;
+}
+
+.status.cancelled {
+  color: #e60000;
+}
+
+.status.unknown {
+  color: #777;
+}
+
+/* 영화제목 + 좌석 */
+.movie-title {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+}
+
+.showtime {
+  color: #777;
+  font-size: 14px;
+}
+
+.seat-type {
+  margin-top: 5px;
+  display: inline-block;
+  background-color: #e1f3f6;
+  color: #007880;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.booking-footer {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.detail-link {
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.detail-link svg {
+  width: 15px;
+  height: 15px;
+}
+
+.empty-text {
+  color: #777;
+  text-align: center;
+  font-size: 15px;
+  margin-top: 40px;
+}

@@ -1,0 +1,21 @@
+{{#movies.content}}
+    <div class="item">
+        <div>
+            {{#mainImageUrl}}
+                <div class="main-image">
+                    <img src="/images/movie/{{mainImageUrl}}" alt="{{title}}">
+                </div>
+            {{/mainImageUrl}}
+            {{^mainImageUrl}}
+                <div>이미지 없음</div>
+            {{/mainImageUrl}}
+            <div>
+                <h5>{{title}}</h5>
+                {{#isNowShowing}}<span>개봉중</span>{{/isNowShowing}}
+                {{#isComingSoon}}<span>상영예정</span>{{/isComingSoon}}
+                {{#isNotShowing}}<span>상영안함</span>{{/isNotShowing}}
+                <!-- 나머지 영화 정보 -->
+            </div>
+        </div>
+    </div>
+{{/movies.content}}

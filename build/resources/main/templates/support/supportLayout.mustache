@@ -1,0 +1,55 @@
+{{> common/header }}
+<link rel="stylesheet" href="/css/support/supportLayout.css?v={{ timestamp }}" />
+
+
+<div class="container support-container">
+    <div class="page-util">
+        {{ pagePath }}
+    </div>
+    <div class="inner-wrap">
+        <div class="support-menu">
+            <a href="/support"><h3>고객센터</h3></a>
+            <nav>
+                <ul class="support-menu-ul">
+                    <li><a href="/support/notice">공지사항</a></li>
+                    <li><a href="/support/faq">자주 묻는 질문</a></li>
+                    <li><a href="/support/inquiryForm">1:1 문의하기</a></li>
+                    <li><a href="/support/myinquiry">나의 문의내역</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="support-contents">
+            {{#supportHome}}
+                {{> support/supportHome }}
+            {{/supportHome}}
+
+            {{#noticeList}}
+                {{> support/noticeList }}
+            {{/noticeList}}
+
+            {{#noticeDetail}}
+                {{> support/noticeDetail }}
+            {{/noticeDetail}}
+
+            {{#faqList}}
+                {{> support/faqList }}
+            {{/faqList}}
+
+            {{#inquiryForm}}
+                {{> support/inquiryForm }}
+            {{/inquiryForm}}
+
+            {{#myinquiry}}
+                {{> support/myinquiry }}
+            {{/myinquiry}}
+
+            {{#inquiryDetail}}
+                {{> support/inquiryDetail }}
+            {{/inquiryDetail}}
+        </div>
+    </div>
+</div>
+
+
+{{> common/footer }}

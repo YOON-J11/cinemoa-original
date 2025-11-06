@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="/css/support/inquiryForm.css?v={{ timestamp }}" />
+<div class="inquiry-form-container">
+    <h2 class="form-title">1:1 문의</h2>
+
+    <div class="form-notice">
+        <p>
+            <strong class="red"> * 문의에 답변하는 직원은 고객 여러분의 가족 중 한 사람일 수 있습니다.</strong><br /><br />
+            고객의 언어폭력(비하, 욕설, 협박, 성희롱 등)으로부터 직원을 보호하기 위해<br />
+            관련 법에 따라 수사기관에 필요한 조치를 요구할 수 있으며, 형법에 의해 처벌 대상이 될 수 있습니다.<br />
+            문의하시기 전 FAQ를 확인하시면 궁금증을 더욱 빠르게 해결하실 수 있습니다.
+        </p>
+    </div>
+
+    <form method="post" action="/support/inquiryForm" class="inquiry-form">
+
+        <!-- 문의유형 -->
+        <div class="form-group group">
+            <label>문의유형<span class="required">*</span></label>
+            <div class="custom-select-wrapper">
+                <div class="custom-select" id="inquiryTypeSelect">문의유형을 선택해주세요</div>
+                <div class="options" id="inquiryTypeOptions">
+                    <div class="option" data-value="예매">예매</div>
+                    <div class="option" data-value="결제">결제</div>
+                    <div class="option" data-value="회원정보">회원정보</div>
+                    <div class="option" data-value="기타">기타</div>
+                </div>
+            </div>
+            <input type="hidden" name="category" id="selectedCategory" required>
+        </div>
+
+        <div class="group">
+            <label for="title">제목<span class="required">*</span></label>
+            <input type="text" id="title" name="title" required maxlength="100"/>
+        </div>
+
+        <div class="group">
+            <label for="content">내용<span class="required">*</span></label>
+            <textarea id="content" name="content" rows="10" maxlength="2000" required
+                      placeholder="문의 내용을 입력해 주세요. 개인정보(이름, 연락처 등)는 포함하지 않도록 주의해 주세요."></textarea>
+        </div>
+
+        <div class="form-terms group">
+            <label>
+                <input type="checkbox" name="agree" required/>
+                개인정보 수집 및 이용에 동의합니다. (필수)
+            </label>
+            <p class="terms-text">※ 동의하지 않을 경우 문의 서비스를 이용하실 수 없습니다.</p>
+        </div>
+
+        <div class="form-submit group">
+            <button type="submit" id="submitBtn" disabled>등록</button>
+        </div>
+    </form>
+</div>
+<script src="/js/support/inquiryForm.js"></script>

@@ -1,0 +1,189 @@
+/* 컨테이너 */
+.inquiry-form-container {
+  max-width: 700px;
+}
+
+/* 제목 */
+.form-title {
+  color: #006f7c;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 안내문 */
+.form-notice {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: 15px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  border-radius : 12px;
+}
+
+.form-notice .red {
+  color: red;
+  font-weight: bold;
+}
+
+/* 전체 폼 */
+.inquiry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 라벨 */
+.inquiry-form label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+/* 필수 표시 */
+.required {
+  color: red;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+/* input, textarea */
+.inquiry-form input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inquiry-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  height: 350px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.inquiry-form input[type="text"]:focus,
+.inquiry-form textarea:focus {
+  border-color: #006f7c;
+  outline: none;
+}
+
+
+/* 셀렉트 */
+.custom-select-wrapper {
+  position: relative;
+  font-size: 14px;
+}
+
+.custom-select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px 30px 10px 12px;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.custom-select::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url('/images/icons/arrow-down.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  z-index: 999;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 5px;
+}
+
+.option {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.option:hover {
+  background-color: #f2f2f2;
+}
+
+.custom-select-wrapper.open .options {
+  display: block;
+}
+
+/* 개인정보 동의 */
+.form-terms {
+  font-size: 14px;
+  color: #555;
+}
+
+.form-terms input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.terms-text {
+  font-size: 13px;
+  margin-top: 5px;
+  color: #888;
+}
+
+/* 버튼 */
+.form-submit {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#submitBtn {
+  padding: 12px 24px;
+  font-size: 15px;
+  background-color: #006f7c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#submitBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.form-submit button:hover {
+  background-color: #005560;
+}
+
+/* placeholder */
+textarea::placeholder {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

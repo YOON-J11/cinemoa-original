@@ -1,0 +1,420 @@
+/* ==== header ==== */
+header {
+  width: 100%;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(to right, #006f7c, #95c0c3) 1;
+  background: #fff;
+}
+/* 로고 및 상단 메뉴 */
+.header-top {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo svg {
+  height: 50px;
+  color: #006f7c;
+}
+/* 로그인, 마이페이지 등 */
+.member-info-wrap ul {
+  display: flex;
+  gap: 10px;
+}
+
+.member-info-wrap li a {
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;  
+}
+.member-info-wrap li a img {
+  width: 25px;
+}
+.member-info-wrap li a p {
+  font-size: 14px;
+}
+/* 메인 내비게이션 */
+.main-nav {
+  background-color: #fff;
+  border-top: 1px solid #eee;
+}
+
+.main-nav > ul {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-nav > ul > li {
+  position: relative;
+}
+
+.main-nav > ul > li > a {
+  display: block;
+  padding: 20px 0;
+  font-weight: bold;
+  color: #222;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.main-nav > ul > li > a:hover {
+  color: #006f7c;
+}
+/* 서브메뉴 */
+.submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100vw;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px 0;
+  z-index: 9999;
+  overflow-x: hidden;
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(to right, #006f7c, #95c0c3) 1;
+}
+
+.submenu-inner {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.submenu li {
+  list-style: none;
+}
+
+.submenu li a {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.submenu-inner li a:hover {
+  color: #006f7c;
+}
+
+.main-nav > ul > li:hover .submenu {
+  display: block;
+}
+
+/*상단고정*/
+#main-nav.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to right, #006f7c, #95c0c3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+#main-nav.fixed > ul > li > a {
+  color: #fff;
+}
+
+#main-nav.fixed .submenu {
+  border-top: none;
+}
+
+
+/* ====  [container]  ==== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ====  [ 하단 고정 버튼 ]  ==== */
+.fixed-btn-wrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.fixed-btn {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-ticketing a {
+    display: inline-block;
+    background: linear-gradient(to right, #006f7c, #95c0c3);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btn_goto-top {
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    color: #333;
+    font-size: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* ====  [ footer ]  ==== */
+footer{
+  background-color: #f4f4f4;
+}
+.footer-inner{
+  max-width: 1200px;
+  width: 100%;
+  padding: 50px 20px;
+  margin: 0 auto;
+}
+.footer-inner ul {
+  display: flex;
+  gap : 10px;
+  font-size: 14px;
+}
+.footer-inner p {
+  font-size: 13px;
+  color: #666;
+  margin-top: 20px;
+  line-height: 16px;
+}
+
+
+
+
+
+
+
+
+/* ==================== 빠른 예매 가이드 ==================== */
+.quick-booking-guide {
+  background: #f9f9f9;
+  padding: 60px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.guide-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.guide-title h3 {
+  font-size: 26px;
+  color: #006f7c;
+  margin-bottom: 8px;
+}
+
+.guide-title p {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 35px;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.steps li {
+  list-style: none;
+  background-color: #fff;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+    justify-content: center;
+  align-items: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.steps li span {
+  background-color: #006f7c;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn-book-now {
+  display: inline-block;
+  background-color: #006f7c;
+  color: white;
+  padding: 14px 34px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-book-now:hover {
+  background-color: #005a66;
+}
+
+
+/* ==================== 실관람 한줄평 ==================== */
+.review-preview {
+  background-color: #fffefc;
+  border-top: 1px solid #eee;
+  padding: 40px 0;
+  text-align: center;
+}
+.review-preview h3 {
+  font-size: 20px;
+  color: #222;
+  margin-bottom: 10px;
+}
+.review-preview .review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.review-preview .review-list li {
+  background: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  font-size: 14px;
+  list-style: none;
+  max-width: 500px;
+}
+.more-reviews {
+  color: #006f7c;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+.more-reviews:hover {
+  text-decoration: underline;
+}
+
+/* ==================== 혜택 안내 카드 ==================== */
+.benefit-section {
+  background: #f9f9f9;
+  padding: 40px 0;
+}
+.benefit-list {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.benefit-item {
+  flex: 1 1 18%;
+  min-width: 150px;
+  max-width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #222;
+  box-shadow: 0 0 10px rgba(0,0,0,0.03);
+  transition: transform 0.2s ease;
+}
+.benefit-item:hover {
+  transform: translateY(-5px);
+}
+.benefit-item img {
+  width: 40px;
+  margin-bottom: 10px;
+}
+.benefit-item p {
+  font-size: 15px;
+}
+
+
+/* ==== 배너 ====*/
+.banner-section {
+    background-color : #08808E;
+}
+
+.banner-section img {
+    width : 100%;
+    max-width: 400px;
+    margin : 0 auto;
+    display: block;
+}
+/* ==================== 공지사항 테이블 ==================== */
+.notice-section {
+  background: #fff;
+  padding: 40px 0;
+}
+.notice-section h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #222;
+}
+.notice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.notice-table th,
+.notice-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+.notice-table a {
+  color: #006f7c;
+  text-decoration: none;
+}
+.notice-table a:hover {
+  text-decoration: underline;
+}
+.more-notice-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #006f7c;
+  text-decoration: none;
+}
+.more-notice-link:hover {
+  text-decoration: underline;
+}

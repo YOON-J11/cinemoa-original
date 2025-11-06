@@ -1,0 +1,213 @@
+.mypage-home-card {
+  background: linear-gradient(45deg, #006f7c, #95c0c3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.card-top img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border : 0.5px solid #ddd;
+}
+
+.profile-info{
+  color: #fff;
+}
+
+.profile-info h1 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  
+}
+.profile-info h1 span{
+  font-weight: bold;
+}
+
+.profile-info p {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.profile-info button {
+  margin-top: 12px;
+  padding: 3px 6px;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #fff;
+  background-color: transparent;
+}
+
+.profile-info button:hover {
+  background-color: #fff;
+  color: #006f7c;
+}
+
+.card-bottom {
+  font-size: 14px;
+  color: #999;
+  margin-top: 10px;
+}
+
+/* ===== 컬럼 ===== */
+.mypage-home-col {
+  margin-bottom: 40px;
+}
+
+.mypage-home-col.mymovie {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.col-left, .col-right {
+  width: 100%;
+}
+
+.movie-items {
+  display: flex;
+  gap: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  align-items: center;
+  transition: box-shadow 0.2s ease;
+}
+
+/* 마이페이지 무비 카드 내 링크 */
+.movie-items a {
+  text-align: center;
+  flex: 1;
+  color: #333;
+  position: relative;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+/* 가운데 막대기 (세로 구분선) */
+.movie-items a:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background-color: #ddd;
+}
+
+
+.movie-items a img {
+  width: 50px;
+  margin-bottom: 6px;
+}
+.movie-items a strong{
+  color: #006f7c;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* 선호 정보 */
+.col-contents {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.col-contents p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.btn-pref-setting {
+  font-size: 13px;
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-left: auto;
+}
+/* 공통 제목 + 링크 */
+.col-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.col-title h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #006f7c;
+  margin-right: 10px;
+  line-height: 1.4;
+}
+
+.col-title a {
+  font-size: 14px;
+  margin-left: auto;
+}
+.col-title span{
+  font-size: 14px;
+}
+
+/* 테이블 */
+.mypage-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.mypage-table thead{
+  background-color: #f4f4f4;
+}
+.mypage-table th,
+.mypage-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  font-size: 14px;
+}
+.mypage-table tbody tr:last-child td {
+  border-bottom: none;
+}
+/* 테이블 컬럼 비율 조정 */
+.mypage-table tr th:nth-child(1),
+.mypage-table tr td:nth-child(1) {
+  width: 70%;
+  text-align: left;
+  padding-left: 15px;
+}
+.mypage-table tr th:nth-child(2),
+.mypage-table tr td:nth-child(2),
+.mypage-table tr th:nth-child(3),
+.mypage-table tr td:nth-child(3) {
+  width: 15%;
+  text-align: center;
+}
+
+.answered {
+  color: #006f7c;
+  font-weight: bold;
+}
+
+.pending {
+  color: gray;
+  font-style: italic;
+}

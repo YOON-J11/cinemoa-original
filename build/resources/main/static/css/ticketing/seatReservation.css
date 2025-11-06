@@ -1,0 +1,401 @@
+.reservation-wrapper {
+  display: flex;
+  gap: 40px;
+}
+
+.seat-selection .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding: 10px 0;
+}
+
+.seat-selection .title h2 {
+  font-size: 24px;
+  margin: 0;
+  line-height: 1;
+}
+
+.reset-btn {
+  background: #fff;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-left: auto;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  height: 36px;
+  cursor: pointer;
+}
+
+.reset-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+.person-selection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px auto;
+  flex-wrap: nowrap;
+}
+
+.person-selection-inner {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.person-selection-inner span {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.person-count {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.person-count input {
+  width: 40px;
+  text-align: center;
+  border: none;
+  background: #fff;
+  pointer-events: none;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.person-count button {
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  flex: 0 0 auto;
+  background-color: #fff;
+}
+
+
+
+.seat-map {
+  border: 2px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f9f9f9;
+
+  /* 기존 flex 정렬 제거 */
+  display: block;
+}
+
+.screen-label {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transform: translateX(15px);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.row-label {
+  width: 20px;
+  text-align: right;
+  margin-right: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* ✅ 새로 추가: 좌석들만 가운데 정렬하는 wrapper */
+.seat-line {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+}
+
+/* 좌석 스타일 */
+.seat {
+  width: 30px;
+  height: 30px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.seat.selected {
+  background-color: #006f7c !important; 
+  color: #fff;
+}
+
+.seat.reserved,
+.seat.disabled {
+  background-color: #eee !important;
+  border: 1px solid #ddd;
+  cursor: not-allowed;
+  color: #999;
+  font-weight: bold;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.seat.accessible {
+  background-color: #ffd700;
+  position: relative;
+}
+
+.seat.accessible::after {
+  content: "♿";
+  font-size: 8px;
+  position: absolute;
+  right: 2px;
+  bottom: 3px;
+  color: #333;
+}
+
+.seat.vip {
+  background-color: #c1e7eb;
+}
+
+.seat-gap {
+  display: inline-block;
+  width: 30px;
+}
+
+
+/* 오른쪽 예약 정보 */
+.reservation-summary {
+  width: 280px;
+  flex-shrink: 0;
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  align-self: flex-start;
+}
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-title {
+  margin-bottom: 20px;
+}
+
+.movie-title h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.3;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.movie-title .rating {
+  width: 20px;
+  height: 20px;
+}
+
+.movie-title p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.cinema-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 20px 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.cinema-info-left p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.movie-info .poster {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+/* 전설표 */
+.legend {
+  border-bottom: 1px solid #ddd;
+}
+
+.legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.legend .box {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  margin-right: 5px;
+  vertical-align: middle;
+  font-size: 20px;
+  text-align: center;
+  color: #777;
+}
+
+.box.selected {
+  background-color: #006f7c;
+}
+
+.box.disabled {
+  background-color: #eee;
+  border: 1px solid #ddd;
+}
+
+.box.normal {
+  background-color: #e0e0e0;
+}
+
+.box.accessible {
+  background-color: #ffd700;
+  position: relative;
+}
+
+.box.accessible::after {
+  content: "♿";
+  font-size: 8px;
+  position: absolute;
+  right: 2px;
+  bottom: 3px;
+  color: #333;
+}
+
+.box.vip {
+  background-color: #c1e7eb;
+}
+
+/* 선택된 좌석 목록 */
+.selected-seats {
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.selected-seats ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.selected-seats ul li {
+  line-height: 1.3;
+  font-weight: bold;
+}
+
+/* 가격 정보 */
+.price-info {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.price-info p {
+  margin-top: 10px;
+}
+
+.price-info p span {
+  font-size: 20px;
+  font-weight: bold;
+  color: #006f7c;
+}
+
+/* 네비게이션 버튼 */
+.navigation {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navigation button {
+  padding: 8px 14px;
+  border: none;
+  background-color: #006f7c;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/*로그인 유도 모달*/
+.modal {
+  display: none; /* JS로 display: flex로 열어줌 */
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* 모달 콘텐츠 박스 */
+.modal-content {
+  background-color: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 안내 문구 */
+.modal-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* 버튼 정렬 */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* 버튼 공통 스타일 */
+.modal-actions button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 6px;
+  background-color: #333;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-actions button:hover {
+  background-color: #555;
+}

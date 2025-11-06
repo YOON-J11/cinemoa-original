@@ -1,0 +1,156 @@
+.mymovie-container {
+  max-width: 900px;
+}
+
+.container-title {
+  color: #006f7c;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 탭 메뉴 */
+.tab-menu {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.tab-menu a {
+  padding: 10px 20px;
+  font-size: 15px;
+  text-decoration: none;
+  color: #555;
+  background-color: #f7f7f7;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-menu a:last-child {
+  border-right: none;
+}
+
+.tab-menu a:hover {
+  background-color: #e9f5f7;
+}
+
+.tab-menu a.active {
+  background-color: white;
+  color: #006f7c;
+  font-weight: bold;
+  z-index: 1;
+}
+
+
+/* 각 영화 카드 */
+.movie-card {
+  display: flex;
+  gap: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 16px;
+  background-color: #fdfdfd;
+}
+
+.poster {
+  width: 100px;
+  height: 150px;
+  border-radius: 8px;
+  border: 0.5px solid #eee;
+  object-fit: cover;
+}
+
+.movie-info {
+  flex: 1;
+}
+
+/* 제목 + 등급 아이콘 */
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-row .title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.grade-image {
+  width: 20px;
+  height: 20px;
+}
+
+/* 상영정보 */
+.info-text {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* 태그 */
+.tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tag {
+  background-color: #e1f3f6;
+  color: #007880;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+/* 실관람평 텍스트 */
+.review-content {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 4px solid #006f7c;
+  color: #333;
+  font-size: 14px;
+  margin-top: 8px;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+/* 실관람평 유도 문구 */
+.no-review {
+  display: inline-block;
+  /* 텍스트만큼 너비 */
+  background-color: #007880;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 8px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  width: auto;
+  /* 명시적으로 auto */
+  max-width: 100%;
+  /* 혹시 길어질 경우 대비 */
+  white-space: nowrap;
+}
+
+.no-review:hover {
+  background-color: #005f6a;
+}
+
+
+.no-data {
+  text-align: center;
+  font-size: 16px;
+  color: #777;
+  margin-top: 40px;
+}

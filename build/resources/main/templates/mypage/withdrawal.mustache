@@ -1,0 +1,42 @@
+<link rel="stylesheet" href="/css/mypage/withdrawal.css?v={{ timestamp }}" />
+<div class="withdrawal-container">
+    <h2 class="container-title">회원 탈퇴</h2>
+    <div class="group">
+        <h3>탈퇴 시 주의사항</h3>
+        <ul class="list">
+            <li>회원 탈퇴 후, 모든 개인정보와 예매 기록이 삭제되며 복구되지 않습니다.</li>
+            <li>탈퇴 후 동일한 아이디로 재가입은 제한될 수 있습니다.</li>
+            <li>보유한 쿠폰, 리뷰, 문의내역 등이 모두 삭제됩니다.</li>
+        </ul>
+    </div>
+    <form method="post" action="/mypage/information/withdraw">
+        <div class="group">
+            <h3>탈퇴 사유 선택</h3>
+            <ul class="list">
+                <li><label><input type="radio" name="reason" value="서비스 장애가 잦아서"> 서비스 장애가 잦아서</label></li>
+                <li><label><input type="radio" name="reason" value="혜택이 적어서"> 이벤트 및 무료서비스 혜택이 적어서</label></li>
+                <li><label><input type="radio" name="reason" value="고객응대 불만족"> 문의 및 불편사항에 대한 고객응대가 나빠서</label></li>
+                <li><label><input type="radio" name="reason" value="이용빈도 낮음"> 이용빈도가 낮고 개인정보 유출이 우려되어</label></li>
+                <li><label><input type="radio" name="reason" value="기타"> 기타</label></li>
+                <!--<li><input type="text" name="otherReason" placeholder="기타 사유 입력" /></li>-->
+                <li><textarea id="otherReason" name="otherReason" placeholder="기타 사유 입력" rows="4" cols="50" disabled></textarea></li>
+            </ul>
+        </div>
+        <div class="group" style="border: none;">
+            <h3>비밀번호 확인</h3>
+            <div class="input-group">
+                <input type="password" name="password" id="password" required placeholder="비밀번호를 입력해주세요" />
+                {{#error}}
+                    <div class="error-msg">{{error}}</div>
+                {{/error}}
+
+            </div>
+        </div>
+        <div class="group btn-group">
+            <!--<a href="/mypage" class="btn cancel">취소</a>-->
+            <button type="submit" class="btn confirm">탈퇴</button>
+        </div>
+    </form>
+</div>
+
+<script src="/js/mypage/withdrawal.js"></script>
