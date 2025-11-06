@@ -1,0 +1,17 @@
+환경변수 설정값
+
+
+키 : MYSQL_PASSWORD
+값: wl184545W
+
+
+키 : MYSQL_URL
+값: jdbc:mysql://jiwonserver2.mysql.database.azure.com:3306/cinemoa?useSSL=true&requireSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+
+
+키 :  MYSQL_USERNAME
+값: yjw5619
+
+
+키 :  SPRING_PROFILES_ACTIVE
+값: prod
